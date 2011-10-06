@@ -11,6 +11,7 @@ if( filename_fq.endswith('gz') ):
 
 filename_out = '%s_tbl'%(filename_fq.replace('.gz',''))
 f_out = open(filename_out,'w')
+f_out.write('#ID\tseq\tqseq\tQmean\tQmedian\tQmin\n')
 sys.stderr.write('Write %s\n'%filename_out)
 for h in f_fq:
     if( h.startswith('@') ):

@@ -20,8 +20,8 @@ for h in f_fq:
         qseq = f_fq.next()
         q_list = [ord(x)-64 for x in qseq]
         q_mean = int(float(sum(q_list))/len(q_list))
-        q_median = sorted(q_list)[int(len(q_list)*0.5))]
+        q_median = sorted(q_list)[int(len(q_list)*0.5)]
         q_min = min(q_list)
-        f_out.write("%s\t%s\t%s\t%d\t%d\t%d\n"%(h,nseq.strip(),qseq.strip()),q_mean,q_median,q_min)
+        f_out.write("%s\t%s\t%s\t%d\t%d\t%d\n"%(h,nseq.strip(),qseq.strip(),q_mean,q_median,q_min))
 f_fq.close()
 f_out.close()

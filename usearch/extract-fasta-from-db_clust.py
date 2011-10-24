@@ -55,7 +55,7 @@ seq_fa = read_fasta(filename_fa)
 for db_id in seq_db.keys():
     if( not clusters.has_key(db_id) ):
         db_tokens = db_id.split('|')
-        print ">%s|%s|0|0.0\n%s"%(db_tokens[0],db_tokens[1],''.join(seq_db[db_id]))
+        print ">%s|%s|%s|%s|NotAdded\n%s"%(db_tokens[0],db_tokens[1],db_tokens[2],db_tokens[3],''.join(seq_db[db_id]))
 
 for cls_id in clusters.keys():
     size = 1

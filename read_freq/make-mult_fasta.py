@@ -13,7 +13,7 @@ lt10_reads = 0
 lt10_readcounts = 0
 
 f_rf = open(filename_rf,'r')
-f_mout = open("%s.mult_fasta"%filename_rf,'w')
+f_mout = open("%s.mult_fasta"%read_prefix,'w')
 if( filename_rf.endswith('.gz') ):
     f_rf = gzip.open(filename_rf,'rb')
 
@@ -36,7 +36,7 @@ for line in f_rf:
 f_rf.close()
 f_mout.close()
 
-f_log = open("%s.log"%filename_rf,'w')
+f_log = open("%s.mult_fasta.log"%read_prefix,'w')
 f_log.write("Reads: total=%d, single=%d(%.3f), lt10=%d(%.3f))\n"%(total_reads,single_reads,float(single_reads)/total_reads,lt10_reads,float(lt10_reads)/total_reads))
 f_log.write("ReadCounts: total=%d, single=%d(%.3f), lt10=%d(%.3f)\n"%(total_readcounts,single_reads,float(single_reads)/total_readcounts, lt10_readcounts, float(lt10_readcounts)/total_readcounts))
 f_log.close()

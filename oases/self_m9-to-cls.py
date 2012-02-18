@@ -84,6 +84,8 @@ for tmp_q in sorted(seqlen.keys(),key=seqlen.get,reverse=True):
         tmp_t = tmp_m['t']
         if( passed.has_key(tmp_t) ):
             continue
+        if( not seqlen.has_key(tmp_t) ):
+            continue
         min_len = min(seqlen[tmp_q],seqlen[tmp_t])
         align_pct = float(tmp_m['len'])/min_len
         if( align_pct > min_align_pct ):

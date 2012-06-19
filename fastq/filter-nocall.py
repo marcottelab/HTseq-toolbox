@@ -52,7 +52,7 @@ f_out.close()
 
 f_raw = open('%s.pos_call'%filename_base,'w')
 f_called = open('%s.called.pos_call'%filename_base,'w')
-f_raw.write('Pos\tA\tT\tG\tC\tN\tn')
+f_raw.write('Pos\tA\tT\tG\tC\tN\n')
 f_called.write('Pos\tA\tT\tG\tC\n')
 for tmp_pos in range(0,read_len):
     tmp_raw = nfreq_raw[tmp_pos]

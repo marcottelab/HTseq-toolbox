@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os
 import sys
 import gzip
@@ -38,7 +38,7 @@ for line in f_fastq:
             count_nocall += 1
             for tmp_i in range(0,read_len):
                 nfreq_raw[tmp_i][ nseq[tmp_i] ] += 1
-        elif( nseq.find('A') < 0 or nseq.find('T') < 0 or nseq.find('G') < 0 or nseq.find('T') ):
+        elif( nseq.find('A') < 0 or nseq.find('T') < 0 or nseq.find('G') < 0 or nseq.find('C') < 0 ):
             count_low_complex += 1
             for tmp_i in range(0,read_len):
                 nfreq_raw[tmp_i][ nseq[tmp_i] ] += 1

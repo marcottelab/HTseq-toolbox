@@ -9,10 +9,13 @@
 #$ -M $EMAIL
 #$ -m be                # Email at Begin and End of job
 #$ -P hpc
-set -x
+set -x                  # Echo commands, use "set echo" with csh
 
-#$ -N nc.
-for FQ in $(ls *.raw.fastq)
+#$ -N fq2rfq
+for FASTQ in $(ls *.called.fastq)
 do
-  $HOME/git/HTseq-toolbox/fastq/filter-nocall.py $FQ
+  CWD=$(dirname $0)
+  OUT=${FASTQ%fastq}"read_freq"
+  echo "$FASTQ --> $OUT"
+  $HOME/git/HTseq-toolbox/fastq/fastq-to-nseq.py $FASTQ | sort -T $SCRATCH | uniq -c | sort -n -T $SCRATCH > $OUT
 done

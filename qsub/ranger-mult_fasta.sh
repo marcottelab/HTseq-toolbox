@@ -9,10 +9,11 @@
 #$ -M $EMAIL
 #$ -m be                # Email at Begin and End of job
 #$ -P hpc
-set -x
 
-#$ -N nc.
-for FQ in $(ls *.raw.fastq)
+set -x                  # Echo commands, use "set echo" with csh
+
+#$ -N rf2mf
+for RF in $(ls *read_freq)
 do
-  $HOME/git/HTseq-toolbox/fastq/filter-nocall.py $FQ
+  $HOME/git/HTseq-toolbox/fastq/make-mult_fasta.py $RF
 done

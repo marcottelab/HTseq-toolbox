@@ -9,10 +9,12 @@
 #$ -M $EMAIL
 #$ -m be                # Email at Begin and End of job
 #$ -P hpc
-set -x
+set -x                  # Echo commands, use "set echo" with csh
 
-#$ -N nc.
-for FQ in $(ls *.raw.fastq)
+FQ2TBL="$HOME/git/HTseq-toolbox/fastq/fastq-to-tbl.py"
+
+#$ -N fq2tbl
+for FQ in $(ls *.called.fastq)
 do
-  $HOME/git/HTseq-toolbox/fastq/filter-nocall.py $FQ
+  $FQ2TBL $FQ | sort -T $SCRATCH > $FQ"_tbl"
 done

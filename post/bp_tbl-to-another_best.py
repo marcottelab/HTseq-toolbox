@@ -32,22 +32,15 @@ for line in f_tbl:
         best_t[q_id] = {'t_id':t_id, 'align_len':align_len, 'q_len':q_len, 't_len':t_len, 'e_value':e_value, 'mismatches':mismatches}
     elif( best_t[q_id]['e_value'] > e_value ):
         best_t[q_id] = {'t_id':t_id, 'align_len':align_len, 'q_len':q_len, 't_len':t_len, 'e_value':e_value, 'mismatches':mismatches}
-
-    len_diff = t_len - q_len
-    if( not min_diff_t.has_key(q_id) ):
-        min_diff_t[q_id] = {'t_id':t_id, 'align_len':align_len, 'q_len':q_len, 't_len':t_len, 'e_value':e_value, 'mismatches':mismatches, 'len_diff':len_diff}
-    elif( abs(min_diff_t[q_id]['len_diff']) > abs(len_diff) ):
-        min_diff_t[q_id] = {'t_id':t_id, 'align_len':align_len, 'q_len':q_len, 't_len':t_len, 'e_value':e_value, 'mismatches':mismatches, 'len_diff':len_diff}
 f_tbl.close()
 
 filename_out = "%s.another_best"%('.'.join(filename_tbl.split('.')[:-1]))
 f_out = open(filename_out,'w')
-f_out.write("#Qid\tQLen\tBestTid\tBestTLen\tBestTAlignLen\tBestTMismatches\tMinDiffTid\tMinDiffTLen\tMinDiffTAlignLen\tMinDiffTMismatches\n")
+f_out.write("#Qid\tQLen\tBestTid\tBestTLen\tBestTAlignLen\tBestTMismatches\n")
 for q_id in sorted(best_t.keys()):
     tmp_best = best_t[q_id]
     tmp_min_diff = min_diff_t[q_id]
 
-    f_out.write("%s\t%d\t%s\t%d\t%d\t%d\t%s\t%d\t%d\t%d\n"%(q_id,tmp_best['q_len'],\
-    tmp_best['t_id'],tmp_best['t_len'],tmp_best['align_len'],tmp_best['mismatches'],\
-    tmp_min_diff['t_id'],tmp_min_diff['t_len'],tmp_min_diff['align_len'],tmp_min_diff['mismatches']))
+    f_out.write("%s\t%d\t%s\t%d\t%d\t%d\n"%(q_id,tmp_best['q_len'],\
+    tmp_best['t_id'],tmp_best['t_len'],tmp_best['align_len'],tmp_best['mismatches']))
 f_out.close()

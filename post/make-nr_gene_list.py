@@ -2,15 +2,19 @@
 import os
 import sys
 
+data_name = sys.argv[1]
+
 species_list = ['XENLA','HUMAN','XENTR','MOUSE','DANRE','CHICK','CAEEL','DROME']
+if( len(sys.argv) > 2 ):
+    species_list = [ sys.argv[2] ]
 
 seq2ortho = dict()
 for tmp_sp in species_list:
-    t_summary = '%s_ens66_pep_longest.Taira201203_XENLA_stage_pep_final.bp+_summary'%tmp_sp
-    q_summary = 'Taira201203_XENLA_stage_pep_final.%s_ens66_pep_longest.bp+_summary'%tmp_sp
+    t_summary = '%s_ens66_pep_longest.%s.bp+_summary'%(tmp_sp,data_name)
+    q_summary = '%s.%s_ens66_pep_longest.bp+_summary'%(data_name,tmp_sp)
     if( tmp_sp == 'XENLA' ):
-        t_summary = '%s_prot_v4.Taira201203_XENLA_stage_pep_final.bp+_summary'%tmp_sp
-        q_summary = 'Taira201203_XENLA_stage_pep_final.%s_prot_v4.bp+_summary'%tmp_sp
+        t_summary = '%s_prot_v4.%s.bp+_summary'%(tmp_sp,data_name)
+        q_summary = '%s.%s_prot_v4.bp+_summary'%(data_name,tmp_sp)
     
     f_t = open(t_summary,'r')
     for line in f_t:

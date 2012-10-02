@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os
 import sys
 
@@ -13,6 +13,9 @@ q2t_ratio = dict()
 
 for line in f_tbl:
     tokens = line.strip().split("\t")
+    if( len(tokens) < 21 or tokens[0] == 'match' ):
+        continue
+
     match = int(tokens[0])
     mismatch = int(tokens[1])
     q_gap_count = int(tokens[4])

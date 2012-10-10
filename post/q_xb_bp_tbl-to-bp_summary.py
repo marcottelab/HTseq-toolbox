@@ -20,8 +20,10 @@ for line in f_tbl:
     q_len = int(tokens[6])
     t_len = int(tokens[9])
     e_value = float(tokens[12])
-    if( align_len < q_len*0.40 ):
-        continue
+
+    ## No more length cutoff, not fair when longest pep is used
+    #if( align_len < q_len*0.40 ):
+    #    continue
 
     if( not q2t.has_key(q_gene) ):
         q2t[q_gene] = dict()

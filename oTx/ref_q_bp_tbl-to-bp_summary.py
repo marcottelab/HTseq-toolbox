@@ -19,6 +19,7 @@ for line in f_tbl:
     q_len = int(tokens[6])
     t_len = int(tokens[9])
     e_value = float(tokens[12])
+
     ## No more length cutoff, not fair when longest pep is used
     #if( align_len < q_len*0.40 ):
     #    continue
@@ -34,7 +35,6 @@ f_tbl.close()
 f_out = open('%s_summary'%filename_tbl.replace('_tbl',''),'w')
 for tmp_q in sorted(q2t.keys()):
     tmp_t_list = sorted(q2t[tmp_q].keys(),key=q2t[tmp_q].get)
-    #print tmp_t_list[:3],[q2t[tmp_q][x] for x in tmp_t_list[:3]]
     tmp_t_str = ','.join(tmp_t_list)
     if( len(tmp_t_list) > 3 ):
         tmp_t_str = ','.join(tmp_t_list[:3])

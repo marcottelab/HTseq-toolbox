@@ -6,7 +6,7 @@ data_name = sys.argv[1]
 
 cdna_list = dict()
 cdna_h = ''
-f_cdna = open('%s_XENLA_cdna.fa'%data_name,'r')
+f_cdna = open('%s_cdna.fa'%data_name,'r')
 for line in f_cdna:
     if( line.startswith('>') ):
         cdna_h = line.strip().lstrip('>')
@@ -17,7 +17,7 @@ f_cdna.close()
 
 pep_list = dict()
 pep_h = ''
-f_pep = open('%s_XENLA_pep.fa'%data_name,'r')
+f_pep = open('%s_pep.fa'%data_name,'r')
 for line in f_pep:
     if( line.startswith('>') ):
         pep_h = line.strip().lstrip('>')
@@ -34,10 +34,10 @@ for tmp_h in pep_list.keys():
     pep_seq[tmp_seq].append( tmp_h )
 
 seq_idx = 1
-f_cdna_out = open('%s_XENLA_cdna_nr.fa'%data_name,'w')
-f_pep_out = open('%s_XENLA_pep_nr.fa'%data_name,'w')
-f_cdna_raw = open('%s_XENLA_cdna_nr.raw.fa'%data_name,'w')
-f_pep_raw = open('%s_XENLA_pep_nr.raw.fa'%data_name,'w')
+f_cdna_out = open('%s_cdna_nr.fa'%data_name,'w')
+f_pep_out = open('%s_pep_nr.fa'%data_name,'w')
+f_cdna_raw = open('%s_cdna_nr.raw.fa'%data_name,'w')
+f_pep_raw = open('%s_pep_nr.raw.fa'%data_name,'w')
 for tmp_pseq in pep_seq.keys():
     longest_nseq = ''
     longest_h = ''

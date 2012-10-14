@@ -17,6 +17,8 @@ for line in f_tbl:
     q_len = int(tokens[6])
     t_len = int(tokens[9])
     e_value = float(tokens[12])
+    bit_score = float(tokens[13])
+
     if( align_len < q_len*0.40 ):
         continue
 
@@ -24,14 +26,14 @@ for line in f_tbl:
         q2t[q_id] = dict()
     
     if( not q2t[q_id].has_key(t_id) ):
-        q2t[q_id][t_id] = e_value
-    elif( q2t[q_id][t_id] > e_value ):
-        q2t[q_id][t_id] = e_value
+        q2t[q_id][t_id] = bit_score 
+    elif( q2t[q_id][t_id] < bit_score ):
+        q2t[q_id][t_id] = bit_score
 f_tbl.close()
 
 f_out = open('%s_summary'%filename_tbl.replace('_tbl',''),'w')
 for tmp_q in sorted(q2t.keys()):
-    tmp_t_list = sorted(q2t[tmp_q].keys(),key=q2t[tmp_q].get)
+    tmp_t_list = sorted(q2t[tmp_q].keys(),key=q2t[tmp_q].get,reverse=True)
     tmp_t_str = ','.join(tmp_t_list)
     if( len(tmp_t_list) > 3 ):
         tmp_t_str = ','.join(tmp_t_list[:3])

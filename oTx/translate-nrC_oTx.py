@@ -2,7 +2,6 @@
 import os
 import sys
 
-#data_name = 'Amin201106'
 data_name = sys.argv[1]
 
 min_plen = 6
@@ -68,8 +67,8 @@ def translate(tmp_nseq):
 def revcomp(tmp_nseq):
     return ''.join([rc[x] for x in tmp_nseq.upper()[::-1]])
 
-f_pfa = open('%s_XENLA_pep.fa'%data_name,'w')
-f_nfa = open('%s_XENLA_cdna.fa'%data_name,'w')
+f_pfa = open('%s_pep.fa'%data_name,'w')
+f_nfa = open('%s_cdna.fa'%data_name,'w')
 
 for tmp_h in sorted(seq_frame.keys()):
     tmp_nseq = ''.join(seq_list[tmp_h])
@@ -102,10 +101,10 @@ for tmp_h in sorted(seq_frame.keys()):
     longest_pep = ''
 
     for tmp_pep in tmp_pseq.split('*'):
-        if( tmp_pseq.find('M') < 0 ):
+        if( tmp_pep.find('M') < 0 ):
             continue
 
-        tmp_p_start = tmp_pseq.index('M')
+        tmp_p_start = tmp_pep.index('M')
         tmp_pep = tmp_pep[tmp_p_start:]
 
         if( len(tmp_pep) > len(longest_pep) ):
@@ -113,6 +112,13 @@ for tmp_h in sorted(seq_frame.keys()):
     
     if( len(longest_pep) < min_plen ):
         continue
+    
+    if( not longest_pep.startswith('M') ):
+        print tmp_h
+        print longest_pep
+        print tmp_pseq
+        print tmp_p_start
+        sys.exit(1)
 
     # if( tmp_h.find('_6447_') >= 0 ):
     #     print tmp_h,max_frame_idx

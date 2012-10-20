@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os
 import sys
 
@@ -34,9 +34,9 @@ f_tbl.close()
 f_out = open('%s_summary'%filename_tbl.replace('_tbl',''),'w')
 for tmp_q in sorted(q2t.keys()):
     tmp_t_list = sorted(q2t[tmp_q].keys(),key=q2t[tmp_q].get,reverse=True)
-    tmp_t_str = ','.join(tmp_t_list)
+    tmp_t_str = ':;'.join(tmp_t_list)
     if( len(tmp_t_list) > 3 ):
-        tmp_t_str = ','.join(tmp_t_list[:3])
+        tmp_t_str = ':;'.join(tmp_t_list[:3])
         
     f_out.write("%s\t%s\n"%(tmp_q,tmp_t_str))
 f_out.close()

@@ -44,12 +44,15 @@ for line in f_tbl:
     if( not q2t.has_key(q_id) ):
         q2t[q_id] = dict()
         q2t_ratio[q_id] = dict()
-    if(not q2t[q_id].has_key(t_id) ):
+    if( not q2t[q_id].has_key(t_id) ):
         q2t[q_id][t_id] = dict()
         q2t_ratio[q_id][t_id] = 0
-
-    q2t[q_id][t_id] = {'strand':strand,'q_size':q_size,'t_size':t_size,'block':','.join(block_list),'qstart':','.join(qstart_list),'tstart':','.join(tstart_list), 'q_gap_bases':q_gap_bases,'t_gap_bases':t_gap_bases,'q_gap_count':q_gap_count,'t_gap_count':t_gap_count}
-    q2t_ratio[q_id][t_id] = match_ratio
+        q2t[q_id][t_id] = {'strand':strand,'q_size':q_size,'t_size':t_size,'block':','.join(block_list),'qstart':','.join(qstart_list),'tstart':','.join(tstart_list), 'q_gap_bases':q_gap_bases,'t_gap_bases':t_gap_bases,'q_gap_count':q_gap_count,'t_gap_count':t_gap_count}
+        q2t_ratio[q_id][t_id] = match_ratio
+    elif( q2t_ratio[q_id][t_id] < match_ratio ):
+        q2t[q_id][t_id] = {'strand':strand,'q_size':q_size,'t_size':t_size,'block':','.join(block_list),'qstart':','.join(qstart_list),'tstart':','.join(tstart_list), 'q_gap_bases':q_gap_bases,'t_gap_bases':t_gap_bases,'q_gap_count':q_gap_count,'t_gap_count':t_gap_count}
+        q2t_ratio[q_id][t_id] = match_ratio
+    
 f_tbl.close()
 
 for tmp_q in q2t_ratio.keys():

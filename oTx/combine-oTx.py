@@ -4,7 +4,6 @@ import sys
 import gzip
 
 prefix = sys.argv[1]
-len_cutoff = 400
 
 filename_out = '%s.combined_oTx.fa'%(prefix)
 
@@ -12,12 +11,12 @@ seq_list = dict()
 for filename in os.listdir('.'):
     if( not filename.startswith(prefix) ):
         continue
-    if( not filename.endswith('.nr_oTx.fa') ):
+    if( not filename.endswith('.oTx.fa') ):
         continue
     if( filename == filename_out ):
         continue
 
-    sample_name = filename.replace('.nr_oTx.fa','')
+    sample_name = filename.replace('.oTx.fa','')
     sys.stderr.write('Read %s (%s)\n'%(filename,sample_name))
     f = open(filename,'r')
     if( filename.endswith('.gz') ):
@@ -45,14 +44,3 @@ for tmp_h in seq_list.keys():
     multi_seq[tmp_seq] += 1
     f_out.write('%s\n%s\n'%(tmp_h,tmp_seq))
 f_out.close()
-
-"""
-multi_idx = 0
-f_multi = open('%s.nr_oTx_multi.fa'%prefix,'w')
-for tmp_seq in sorted(multi_seq.keys(),key=multi_seq.get,reverse=True):
-    if( multi_seq[tmp_seq] > 1 ):
-        f_multi.write('>%s_m%08d_%d\n%s\n'%(prefix,multi_idx,multi_seq[tmp_seq],tmp_seq))
-        multi_idx += 1
-f_multi.close()
-sys.stderr.write('Total seq=%d, Multi seq=%d\n'%(count_total,multi_idx))
-"""

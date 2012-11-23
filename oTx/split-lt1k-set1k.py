@@ -18,10 +18,10 @@ for line in f_fa:
         seqlen[h] += len( line.strip() )
 f_fa.close()
 
-filename_base = filename_fa.replace('.fasta','').replace('.fa','')
+filename_base = filename_fa.replace('.fasta','').replace('.fa','').replace('_fa','')
 
-f_lt1k = open('%s.lt1k_fa'%filename_base,'w')
-f_set1k = open('%s.set1k_fa'%filename_base,'w')
+f_lt1k = open('%s_lt1k_fa'%filename_base,'w')
+f_set1k = open('%s_set1k_fa'%filename_base,'w')
 
 is_lt1k = 0
 for tmp_h in sorted( seqlen.keys(), key=seqlen.get, reverse=True):

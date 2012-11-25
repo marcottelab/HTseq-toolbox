@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os
 import sys
+import gzip
 
 filename_fa = sys.argv[1]
 
@@ -8,6 +9,9 @@ h = ''
 seq_list = dict()
 seqlen = dict()
 f_fa = open(filename_fa,'r')
+if( filnemae_fa.endswith('.gz') ):
+    f_fa = gzip.open(filename_fa,'rb')
+
 for line in f_fa:
     if( line.startswith('>') ):
         h = line.strip().lstrip('>')

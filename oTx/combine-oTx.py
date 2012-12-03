@@ -17,11 +17,11 @@ for filename in os.listdir('.'):
         continue
 
     sample_name = filename.replace('.oTx.fa','')
-    sys.stderr.write('Read %s (%s)\n'%(filename,sample_name))
     f = open(filename,'r')
     if( filename.endswith('.gz') ):
         sample_name = sample_name.replace('.gz','')
         f = gzip.open(filename,'rb')
+    sys.stderr.write('Read %s (%s)\n'%(filename,sample_name))
     
     seq_h = ''
     for line in f:

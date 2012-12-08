@@ -13,7 +13,7 @@ set -x
 #$ -N p.J2oo
 
 PAIR="pair-fastq.py"
-for R1 in $(ls *.raw.fastq.gz)
+for R1 in $(ls *_R1.raw.fastq.gz)
 do
   R2=${R1/_R1/_R2}
   OUT=${R1/_R1.raw.fastq.gz/_paired.fastq}

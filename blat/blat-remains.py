@@ -2,8 +2,10 @@
 import os
 import sys
 
-filename_fa = sys.argv[1]
-filename_psl = sys.argv[2]
+#filename_fa = sys.argv[1]
+#filename_psl = sys.argv[2]
+filename_psl = sys.argv[1]
+filename_fa = filename_psl.split('.')[0] + ".fa"
 
 seq_h = ''
 seq_list = dict()

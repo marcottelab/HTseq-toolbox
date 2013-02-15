@@ -1,17 +1,25 @@
 #!/usr/bin/python
 import os
 import sys
-import gzip
 
 filename_fa = sys.argv[1]
 filename_part = sys.argv[2]
 
+usage_mesg = 'make-NoPart_oTx.py <.fa> <.part>'
+
+if( not os.access(filename_fa,os.R_OK) ):
+    sys.stderr.write('%s is not available.\n%s\n'%(filename_fa,usage_mesg))
+    sys.exit(1)
+
+if( not os.access(filename_part,os.R_OK) ):
+    sys.stderr.write('%s is not available.\n%s\n'%(filename_part,usage_mesg))
+    sys.exit(1)
+
 seq_h = ''
 seq_list = dict()
 seqlen = dict()
+
 f_fa = open(filename_fa,'r')
-if( filename_fa.endswith('.gz') ):
-    f_fa = gzip.open(filename_fa,'rb')
 for line in f_fa:
     if( line.startswith('>') ):
         seq_h = line.strip().lstrip('>')
@@ -42,7 +50,7 @@ f_part.close()
 filename_base = filename_fa.split('.')[0]
 
 is_part = dict()
-f_out = open('%s.NR_oTx.fa'%filename_base,'w')
+f_out = open('%s_NoPart_oTx.fa'%filename_base,'w')
 for tmp_h in sorted(seqlen.keys(),key=seqlen.get,reverse=True):
     if( is_part.has_key(tmp_h) ):
         continue

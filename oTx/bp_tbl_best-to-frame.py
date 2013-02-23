@@ -48,7 +48,7 @@ for tmp_q in sorted(frames.keys()):
             if( tmp['align_len'] > tmp_longest_len ):
                 tmp_longest_len = tmp['align_len']
                 tmp_longest_frame = tmp_frame
-            out_map[ '%s=%d(%d)'%(tmp_frame,tmp['count'],tmp['align_len']) ] = tmp['count']
+            out_map[ '%s=%d|%d'%(tmp_frame,tmp['count'],tmp['align_len']) ] = tmp['count']
         
         f_dubious.write("%s\t%s\n"%(tmp_q,','.join([x for x in sorted(out_map.keys(),key=out_map.get)] )))
         f_frame.write("%s|%s\n"%(tmp_q,tmp_longest_frame))

@@ -28,7 +28,7 @@ count_nocall_1 = 0
 count_nocall_2 = 0
 count_nocall_12 = 0
 
-f_out = open(filename_out,'w')
+f_out = open('%s.paired.fastq'%filename_out,'w')
 for line in f_fq1:
     h_nseq1 = line.strip()
     nseq1 = f_fq1.next().strip()
@@ -92,6 +92,13 @@ for line in f_fq1:
             nfreq2_raw[tmp_i][ nseq2[tmp_i] ] += 1
             nfreq2_called[tmp_i][ nseq2[tmp_i] ] += 1
         
+        h1_tokens = h_nseq1.split()
+        if( len(h1_tokens) > 1 ):
+            h_nseq1 = '@%s'%h1_tokens[1]
+        h2_tokens = h_nseq2.split()
+        if( len(h2_tokens) > 1 ):
+            h_nseq2 = '@%s'%h2_tokens[1]
+
         f_out.write('%s\n%s\n+\n%s\n'%(h_nseq1,nseq1,qseq1))
         f_out.write('%s\n%s\n+\n%s\n'%(h_nseq2,nseq2,qseq2))
 
@@ -119,7 +126,7 @@ for tmp_i in range(0,read2_len):
 f_raw.close()
 f_called.close()
 
-f_log = open('%s.log'%filename_out,'w')
+f_log = open('%s.paired.log'%filename_out,'w')
 f_log.write('Total pairs: %d\n'%count_total)
 count_fail = count_nocall_12 + count_nocall_1 + count_nocall_2
 f_log.write('Failed: %d (_1:%d, _2:%d, both:%d)\n'%(count_fail,count_nocall_1,count_nocall_2,count_nocall_12))

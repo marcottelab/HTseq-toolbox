@@ -21,7 +21,7 @@ for line in f_best:
     bitscore = int(tokens[7])
     
     align_ratio = (align_len - mismatches)*100.0 / q_len
-    if( gap_opens == 0 and align_ratio > 95 and q_len <= t_len ):
+    if( gap_opens == 0 and align_ratio > 99 and q_len <= t_len ):
         f_part.write("%s\n"%(line.strip()))
 f_best.close()
 f_part.close()

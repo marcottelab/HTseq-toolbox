@@ -18,7 +18,7 @@ for line in f_best:
     align_len = int(tokens[4])
     mismatches = int(tokens[5])
     gap_opens = int(tokens[6])
-    bitscore = int(tokens[7])
+    bitscore = float(tokens[7])
     
     align_ratio = (align_len - mismatches)*100.0 / q_len
     if( gap_opens == 0 and align_ratio > 99 and q_len <= t_len ):

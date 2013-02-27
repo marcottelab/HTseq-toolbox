@@ -35,7 +35,7 @@ for line in f_tbl:
 f_tbl.close()
 
 f_best = open('%s_best'%filename_tbl.replace('.gz',''),'w')
-f_best.write('#Qid\tQLen\tTid\tTLen\tAlignLen\tMismatches\tGapOpens\tBitScore\n')
+f_best.write('#Qid\tQLen\tTid\tTLen\tAlignLen\tMismatches\tGapOpens\tBitScore\tEvalue\n')
 for q_id in sorted(best_hit.keys()):
     tmp = best_hit[q_id]
     f_best.write('%s\t%d\t%s\t%d\t%d\t%d\t%d\t%.1f\t%.2e\n'%(q_id,tmp['q_len'],tmp['t_id'],tmp['t_len'],tmp['align_len'],tmp['mismatches'],tmp['gap_opens'],tmp['bit_score'],tmp['evalue']))

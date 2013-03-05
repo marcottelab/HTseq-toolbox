@@ -6,7 +6,7 @@ data_name = sys.argv[1]
 
 cdna_list = dict()
 cdna_h = ''
-f_cdna = open('%s_cdna.fa'%data_name,'r')
+f_cdna = open('%s.cdna.fa'%data_name,'r')
 for line in f_cdna:
     if( line.startswith('>') ):
         cdna_h = line.strip().lstrip('>')
@@ -17,7 +17,7 @@ f_cdna.close()
 
 prot_list = dict()
 prot_h = ''
-f_prot = open('%s_prot.fa'%data_name,'r')
+f_prot = open('%s.prot.fa'%data_name,'r')
 for line in f_prot:
     if( line.startswith('>') ):
         prot_h = line.strip().lstrip('>')
@@ -33,8 +33,8 @@ for tmp_h in prot_list.keys():
         prot_seq[tmp_seq] = []
     prot_seq[tmp_seq].append( tmp_h )
 
-f_cdna_out = open('%s_cdna_NR.fa'%data_name,'w')
-f_prot_out = open('%s_prot_NR.fa'%data_name,'w')
+f_cdna_out = open('%s.cdna_NR.fa'%data_name,'w')
+f_prot_out = open('%s.prot_NR.fa'%data_name,'w')
 f_log_out = open('%s_NR.log'%data_name,'w')
 for tmp_pseq in prot_seq.keys():
     longest_nseq = ''

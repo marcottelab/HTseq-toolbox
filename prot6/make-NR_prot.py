@@ -29,6 +29,10 @@ f_prot.close()
 prot_seq = dict()
 for tmp_h in prot_list.keys():
     tmp_seq = ''.join(prot_list[tmp_h])
+    if( tmp_seq.find('M') >= 0 ):
+        tmp_M_pos = tmp_seq.index('M')
+        tmp_seq = tmp_seq[tmp_M_pos:]
+
     if( not prot_seq.has_key(tmp_seq) ):
         prot_seq[tmp_seq] = []
     prot_seq[tmp_seq].append( tmp_h )
@@ -49,7 +53,10 @@ for tmp_pseq in prot_seq.keys():
             longest_nseq = tmp_nseq
     
     f_cdna_out.write('>%s\n%s\n'%(longest_h_cdna,longest_nseq))
-    f_prot_out.write('>%s\n%s\n'%(longest_h_prot,tmp_pseq))
+    if( tmp_pseq.startswith('M') ):
+        f_prot_out.write('>M%s\n%s\n'%(longest_h_prot,tmp_pseq))
+    else:
+        f_prot_out.write('>%s\n%s\n'%(longest_h_prot,tmp_pseq))
     f_log_out.write('%s\t%s\n'%(longest_h_prot, ';;'.join(prot_seq[tmp_pseq])))
 f_prot_out.close()
 f_cdna_out.close()

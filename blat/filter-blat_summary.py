@@ -51,47 +51,6 @@ for tmp_ratio in [x*0.01 for x in range(100,0,-1)]:
         ratio_5pct = tmp_ratio
         break
 
-#print t1s_count
-#sys.exit(1)
-
-import matplotlib
-matplotlib.use('Agg')
-
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
-
-fig = plt.figure(figsize=(12,5))
-ax1 = fig.add_subplot(1,2,1)
-n, bins, patches = ax1.hist(t1s_ratio_list,bins=100,edgecolor='none',label='1st+single')
-ax1.hist(t1_ratio_list,bins=100,histtype='step',edgecolor='cyan',lw=2,label='1st')
-ax1.hist(s_ratio_list,bins=100,histtype='step',edgecolor='orange',lw=2,label='single')
-ax1.hist(t2_ratio_list,bins=100,histtype='step',edgecolor='black',lw=2,label='2nd')
-ax1.set_xlim(0,1.01)
-ax1.grid()
-ax1.legend(loc='upper left', prop=fm.FontProperties(size=10))
-ax1.set_xlabel('Align ratio')
-ax1.set_ylabel('Number of Query Sequences')
-ax1.set_title('Overall')
-
-ax2 = fig.add_subplot(1,2,2)
-n, bins, patches = ax2.hist([x for x in t1s_ratio_list if x>0.8],bins=100,edgecolor='none',label='1st+single')
-ax2.hist([x for x in t1_ratio_list if x>0.8],bins=100,histtype='step',edgecolor='cyan',lw=2,label='1st')
-ax2.hist([x for x in s_ratio_list if x>0.8],bins=100,histtype='step',edgecolor='orange',lw=2,label='single')
-ax2.hist([x for x in t2_ratio_list if x>0.8],bins=100,histtype='step',edgecolor='black',lw=2,label='2nd')
-if( ratio_1pct > 0.80 ):
-    ax2.vlines(ratio_1pct, 0, max(n)*0.3, color='red',lw=3,label='1 pct cutoff (1st+single=%d;2nd=%d)'%(count_t1_1pct,count_t2_1pct))
-    ax2.text(ratio_1pct, max(n)*0.3, '%.2f'%ratio_1pct, color='red')
-ax2.set_xlim(0.8,1.001)
-ax2.grid()
-ax2.legend(loc='upper left', prop=fm.FontProperties(size=9))
-ax2.set_xlabel('Align ratio')
-ax2.set_title('Zoom in: 0.80 ~ 1.00 (1pct cutoff:%.2f)'%ratio_1pct)
-sys.stderr.write('1 pct cutoff (1st+single=%d;2nd=%d)\n'%(count_t1_1pct,count_t2_1pct))
-
-#plt.show()
-plt.savefig('%s_dist.png'%filename_sum)
-plt.savefig('%s_dist.pdf'%filename_sum)
-
 f_out = open('%s_1pct.txt'%filename_sum,'w')
 for tmp_s in sum_list:
     tmp_t1_ratio = float(tmp_s[4])

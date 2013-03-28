@@ -37,7 +37,8 @@ for line in f_fastq:
         if( nseq.find('N') >= 0 or nseq.find('.') >= 0 ):
             count_nocall += 1
             for tmp_i in range(0,read_len):
-                nfreq_raw[tmp_i][ nseq[tmp_i] ] += 1
+                tmp_nseq = 'N'
+                nfreq_raw[tmp_i][ tmp_nseq ] += 1
         elif( nseq.find('A') < 0 or nseq.find('T') < 0 or nseq.find('G') < 0 or nseq.find('C') < 0 ):
             count_low_complex += 1
             for tmp_i in range(0,read_len):

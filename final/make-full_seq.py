@@ -74,7 +74,7 @@ for line in f_cdna:
             sys.stderr.write("Error:%s\n"%tmp_h_common)
         
         stop_split = tmp_trans_seq.split('*')
-        if( len(stop_split) == 1 ):
+        if( len(stop_split) == 1 or not tmp_pseq.startswith('M') ):
             count_partial += 1
             f_prot_part.write('>%s\n%s\n'%(prot_h[tmp_h_common], tmp_pseq))
             f_cdna_part.write('>%s\n%s\n'%(tmp_h, tmp_nseq))

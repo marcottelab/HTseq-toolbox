@@ -3,8 +3,8 @@ import os
 import sys
 
 data_name = sys.argv[1]
-filename_prot = '%s.prot_final.fa'%data_name
-filename_cdna = '%s.cdna_final.fa'%data_name
+filename_prot = '%s.prot.fa'%data_name
+filename_cdna = '%s.cdna.fa'%data_name
 
 prot_seq = dict()
 prot_h = dict()
@@ -63,8 +63,10 @@ for line in f_cdna:
         tmp_nseq = f_cdna.next().strip()
 
         if( not prot_seq.has_key(tmp_h_common) ):
+            sys.stderr.write('No prot seq:%s\n'%tmp_h_common)
             continue
         if( not frame.has_key(tmp_h_common) ):
+            sys.stderr.write('No frame:%s\n'%tmp_h_common)
             continue
 
         tmp_pseq = prot_seq[tmp_h_common]
@@ -74,13 +76,13 @@ for line in f_cdna:
             sys.stderr.write("Error:%s\n"%tmp_h_common)
         
         stop_split = tmp_trans_seq.split('*')
-        if( len(stop_split) == 1 or not tmp_pseq.startswith('M') ):
+        if( len(stop_split) == 1 or tmp_pseq.find('M') < 0):
             count_partial += 1
             f_prot_part.write('>%s\n%s\n'%(prot_h[tmp_h_common], tmp_pseq))
             f_cdna_part.write('>%s\n%s\n'%(tmp_h, tmp_nseq))
             f_cds_part.write('>cds.%s\n%s\n'%(tmp_h_common, tmp_nseq[frame[tmp_h_common]+3*tmp_start:]))
             continue
-
+        
         tmp_idx = 0
         for tmp_p in stop_split:
             if( tmp_p.find(tmp_pseq) >= 0 ):
@@ -89,6 +91,8 @@ for line in f_cdna:
 
         if( tmp_idx < len(stop_split) ):
             count_full += 1
+            tmp_Mstart = tmp_pseq.index('M')
+            tmp_pseq = tmp_pseq[tmp_Mstart:]
             f_prot_full.write('>%s\n%s\n'%(prot_h[tmp_h_common], tmp_pseq))
             f_cdna_full.write('>%s\n%s\n'%(tmp_h, tmp_nseq))
             f_cds_full.write('>cds.%s\n%s\n'%(tmp_h_common, tmp_nseq[frame[tmp_h_common]+3*tmp_start:len(tmp_pseq)*3+3]))

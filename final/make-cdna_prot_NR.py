@@ -15,6 +15,17 @@ for line in f_cdna:
         cdna_list[cdna_h].append( line.strip() )
 f_cdna.close()
 
+cds_list = dict()
+cds_h = ''
+f_cds = open('%s.cds_full.fa'%data_name,'r')
+for line in f_cds:
+    if( line.startswith('>') ):
+        cds_h = line.strip().lstrip('>')
+        cds_list[cds_h] = []
+    else:
+        cds_list[cds_h].append( line.strip() )
+f_cds.close()
+
 prot_list = dict()
 prot_h = ''
 f_prot = open('%s.prot_full.fa'%data_name,'r')
@@ -38,21 +49,29 @@ for tmp_h in prot_list.keys():
     prot_seq[tmp_seq].append( tmp_h )
 
 f_cdna_out = open('%s.cdna_full_NR.fa'%data_name,'w')
+f_cds_out = open('%s.cds_full_NR.fa'%data_name,'w')
 f_prot_out = open('%s.prot_full_NR.fa'%data_name,'w')
 f_log_out = open('%s_full_NR.log'%data_name,'w')
 for tmp_pseq in prot_seq.keys():
     longest_nseq = ''
+    longest_cds_seq = ''
     longest_h_prot = ''
     longest_h_cdna = ''
+    longest_h_cds = ''
     for tmp_h in prot_seq[tmp_pseq]:
         tmp_h_cdna = 'c.%s'%('.'.join(tmp_h.split('.')[1:]))
+        tmp_h_cds = 'cds.%s'%('.'.join(tmp_h.split('.')[1:]))
         tmp_nseq = ''.join(cdna_list[tmp_h_cdna])
+        tmp_cds_seq = ''.join(cds_list[tmp_h_cds])
         if( len(tmp_nseq) > len(longest_nseq) ):
             longest_h_prot = tmp_h
             longest_h_cdna = tmp_h_cdna
+            longest_h_cds = tmp_h_cds
             longest_nseq = tmp_nseq
+            longest_cds_seq = tmp_cds_seq
     
     f_cdna_out.write('>%s\n%s\n'%(longest_h_cdna,longest_nseq))
+    f_cds_out.write('>%s\n%s\n'%(longest_h_cds,longest_cds_seq))
     if( tmp_pseq.startswith('M') ):
         f_prot_out.write('>M%s\n%s\n'%(longest_h_prot,tmp_pseq))
     else:
@@ -60,3 +79,5 @@ for tmp_pseq in prot_seq.keys():
     f_log_out.write('%s\t%s\n'%(longest_h_prot, ';;'.join(prot_seq[tmp_pseq])))
 f_prot_out.close()
 f_cdna_out.close()
+f_cds_out.close()
+f_log_out.close()

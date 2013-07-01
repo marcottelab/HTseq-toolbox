@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os
 import sys
 
@@ -48,6 +48,7 @@ def translate(tmp_nseq):
 f_prot_full = open('%s.prot_full.fa'%data_name,'w')
 f_cdna_full = open('%s.cdna_full.fa'%data_name,'w')
 f_cds_full = open('%s.cds_full.fa'%data_name,'w')
+
 f_prot_part = open('%s.prot_partial.fa'%data_name,'w')
 f_cdna_part = open('%s.cdna_partial.fa'%data_name,'w')
 f_cds_part = open('%s.cds_partial.fa'%data_name,'w')
@@ -75,29 +76,20 @@ for line in f_cdna:
         if( tmp_start < 0 ):
             sys.stderr.write("Error:%s\n"%tmp_h_common)
         
-        stop_split = tmp_trans_seq.split('*')
-        if( len(stop_split) == 1 or tmp_pseq.find('M') < 0):
+        if( tmp_trans_seq.find('*') < 0 or tmp_pseq.find('M') < 0):
             count_partial += 1
             f_prot_part.write('>%s\n%s\n'%(prot_h[tmp_h_common], tmp_pseq))
             f_cdna_part.write('>%s\n%s\n'%(tmp_h, tmp_nseq))
             f_cds_part.write('>cds.%s\n%s\n'%(tmp_h_common, tmp_nseq[frame[tmp_h_common]+3*tmp_start:]))
             continue
-        
-        tmp_idx = 0
-        for tmp_p in stop_split:
-            if( tmp_p.find(tmp_pseq) >= 0 ):
-                break
-            tmp_idx += 1
 
-        if( tmp_idx < len(stop_split) ):
-            count_full += 1
-            tmp_Mstart = tmp_pseq.index('M')
-            tmp_pseq = tmp_pseq[tmp_Mstart:]
-            f_prot_full.write('>%s\n%s\n'%(prot_h[tmp_h_common], tmp_pseq))
-            f_cdna_full.write('>%s\n%s\n'%(tmp_h, tmp_nseq))
-            f_cds_full.write('>cds.%s\n%s\n'%(tmp_h_common, tmp_nseq[frame[tmp_h_common]+3*tmp_start:len(tmp_pseq)*3+3]))
-            #print "Good: ",tmp_start, tmp_idx, len(stop_split)
-        #tmp_cds = get_cds(tmp_f0, tmp_nseq)
+        count_full += 1
+        tmp_Mstart = tmp_start + tmp_pseq.index('M')
+        tmp_pseq = tmp_pseq[tmp_Mstart:]
+
+        f_prot_full.write('>%s\n%s\n'%(prot_h[tmp_h_common], tmp_pseq))
+        f_cdna_full.write('>%s\n%s\n'%(tmp_h, tmp_nseq))
+        f_cds_full.write('>cds.%s\n%s\n'%(tmp_h_common, tmp_nseq[frame[tmp_h_common]+3*tmp_Mstart:len(tmp_pseq)*3+3]))
 f_cdna.close()
 
 sys.stderr.write("%s - Full: %d, Partial %d\n"%(data_name, count_full, count_partial))

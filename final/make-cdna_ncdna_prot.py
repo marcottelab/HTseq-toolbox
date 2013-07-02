@@ -53,7 +53,7 @@ f_nseq = open('%s_NoPart_oTx.fa'%data_name,'r')
 for line in f_nseq:
     if( line.startswith('>') ):
         tmp_h = line.strip().lstrip('>')
-        tmp_seq = f_nseq.next().strip()
+        tmp_seq = f_nseq.next().strip().upper()
         if( unique_seq.has_key(tmp_h) ):
             f_prot.write('>p.%s\n%s\n'%(tmp_h,prot_seq['%s|%s'%(tmp_h,unique_seq[tmp_h])]))
             if( unique_seq[tmp_h].startswith('r') ):

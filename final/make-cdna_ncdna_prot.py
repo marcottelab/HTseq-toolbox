@@ -3,8 +3,6 @@ import os
 import sys
 
 data_name = sys.argv[1]
-filename_prot = sys.argv[2]
-filename_cdna = sys.argv[3]
 
 def read_fasta(filename):
     rv = dict()
@@ -17,9 +15,9 @@ def read_fasta(filename):
     f.close()
     return rv
 
-#filename_prot = '%s_NoPart_oTx_prot6.fa'%data_name
+filename_prot = '%s_NoPart_oTx_prot6.fa'%data_name
 sys.stderr.write('Read %s ... '%filename_prot)
-prot_seq = read_fasta(filename_prot)
+prot_seq = read_fasta('%s_NoPart_oTx_prot6.fa'%data_name)
 sys.stderr.write('Done\n')
 
 sys.stderr.write('Read frame ... ')
@@ -51,7 +49,7 @@ f_ncdna = open('%s.ncdna.fa'%data_name,'w')
 f_ncdna_p = open('%s.ncdna_prot.fa'%data_name,'w')
 f_prot = open('%s.prot.fa'%data_name,'w')
 
-f_nseq = open(filename_cdna,'r')
+f_nseq = open('%s_NoPart_oTx.fa'%data_name,'r')
 for line in f_nseq:
     if( line.startswith('>') ):
         tmp_h = line.strip().lstrip('>')

@@ -35,8 +35,8 @@ f_unique = open('%s.unique_frame'%data_name,'r')
 for line in f_unique:
     tokens = line.strip().split("\t")
     prot_id = tokens[0]
-    cdna_id = prot_id.split('|')[0]
-    tmp_frame = prot_id.split('|')[1]
+    cdna_id = '|'.join(prot_id.split('|')[:-1])
+    tmp_frame = prot_id.split('|')[-1]
     unique_seq[cdna_id] = tmp_frame
 f_unique.close()
 sys.stderr.write('Done\n')

@@ -42,7 +42,7 @@ for line in f_sam:
         continue
 
     strand = 1
-    if( int(tokens[1]) & 256 == 256 ):
+    if( int(tokens[1]) & 16 == 16 ):
         strand = -1
 
     t_id = tokens[2]

@@ -21,13 +21,6 @@ prot_seq = read_fasta('%s_NoPart_oTx_prot6.fa'%data_name)
 sys.stderr.write('Done\n')
 
 sys.stderr.write('Read frame ... ')
-dubious_seq = dict()
-f_dubious = open('%s.dubious_frame'%data_name,'r')
-for line in f_dubious:
-    tokens = line.strip().split("\t")
-    dubious_seq[ tokens[0] ] = 1
-f_dubious.close()
-
 unique_seq = dict()
 f_unique = open('%s.unique_frame'%data_name,'r')
 for line in f_unique:
@@ -44,7 +37,6 @@ def revcomp(tmp_seq):
     return ''.join([rc[x] for x in tmp_seq[::-1]])
 
 f_cdna = open('%s.cdna.fa'%data_name,'w')
-f_err = open('%s.err.fa'%data_name,'w')
 f_ncdna = open('%s.ncdna.fa'%data_name,'w')
 f_ncdna_p = open('%s.ncdna_prot.fa'%data_name,'w')
 f_prot = open('%s.prot.fa'%data_name,'w')
@@ -60,8 +52,6 @@ for line in f_nseq:
                 f_cdna.write('>c.%s\n%s\n'%(tmp_h,revcomp(tmp_seq)))
             else:
                 f_cdna.write('>c.%s\n%s\n'%(tmp_h,tmp_seq))
-        elif( dubious_seq.has_key(tmp_h) ):
-            f_err.write('>e.%s\n%s\n'%(tmp_h,tmp_seq))
         else:
             tmp_prot_seq = ''
             for tmp_frame in ['f0','f1','f2','r0','r1','r2']:
@@ -73,5 +63,9 @@ for line in f_nseq:
                     tmp_prot_seq = prot_seq[tmp_prot_id]
             f_ncdna.write('>nc.%s\n%s\n'%(tmp_h,tmp_seq))
             f_ncdna_p.write('>ncp.%s\n%s\n'%(tmp_h,tmp_prot_seq))
-
 f_nseq.close()
+
+f_cdna.close()
+f_prot.close()
+f_ncdna.close()
+f_ncdna_p.close()

@@ -22,13 +22,15 @@ for tmp_h in seq_list.keys():
         seq_map[tmp_seq] = []
     seq_map[tmp_seq].append( tmp_h )
 
-count_unique = 0 
+count_single = 0 
 count_multi = 0
 filename_base = filename_fa.replace('.fa','')
 filename_base = filename_base.replace('.sorted_fa','')
 
 exc_list = dict()
 f_nr = open('%s.NR_fa'%filename_base,'w')
+f_single = open('%s.single_fa'%filename_base,'w')
+f_multi = open('%s.multi_fa'%filename_base,'w')
 f_nr_log = open('%s.NR_log'%filename_base,'w')
 for tmp_seq in seq_map.keys():
     tmp_h_list = seq_map[tmp_seq]
@@ -40,11 +42,16 @@ for tmp_seq in seq_map.keys():
     f_nr.write('>%s\n%s\n'%(tmp_h,tmp_seq))
     if( len(tmp_h_list) > 1 ):
         f_nr_log.write('%s\t%s\n'%(tmp_h,';;'.join(tmp_h_list)))
+        f_multi.write('>%s\n%s\n'%(tmp_h,tmp_seq))
         count_multi += 1
     else:
-        count_unique += 1
+        f_single.write('>%s\n%s\n'%(tmp_h,tmp_seq))
+        count_single += 1
 f_nr_log.write('#total seq: %d\n'%len(seq_list))
 f_nr_log.write('#total nr seq: %d\n'%len(seq_map))
-f_nr_log.write('#unique seq: %d, redundant seq:%d\n'%(count_unique, count_multi))
+f_nr_log.write('#single seq: %d, multi seq:%d\n'%(count_single, count_multi))
 f_nr_log.close()
 f_nr.close()
+
+f_single.close()
+f_multi.close()

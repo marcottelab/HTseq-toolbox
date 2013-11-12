@@ -1,9 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os 
 import sys
 
 filename_best = sys.argv[1]
 filename_part = filename_best.replace('_best','')+'_part'
+
+max_gap_opens = 0
+min_align_ratio_pct = 99
 
 f_part = open(filename_part,'w')
 f_best = open(filename_best,'r')
@@ -21,7 +24,7 @@ for line in f_best:
     bitscore = float(tokens[7])
     
     align_ratio = (align_len - mismatches)*100.0 / q_len
-    if( gap_opens == 0 and align_ratio > 99 and q_len <= t_len ):
+    if( gap_opens <= max_gap_opens and align_ratio >= min_align_ratio_pct and q_len <= t_len ):
         f_part.write("%s\n"%(line.strip()))
 f_best.close()
 f_part.close()

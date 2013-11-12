@@ -2,18 +2,24 @@
 import os
 import sys
 
-filename_tbl = sys.argv[1]
+usage_mesg = 'Usage: $HST/align/psl-to-top2.py <.psl file>'
 
-f_tbl = open(filename_tbl,'r')
-for i in range(0,5):
-    f_tbl.next()
+if( len(sys.argv) != 2 ):
+    sys.stderr.write('%s\n'%usage_mesg)
+    sys.exit(1)
+
+filename_psl = sys.argv[1]
+filename_out = '%s_top2'%(filename_psl.replace('_psl',''))
 
 q2t = dict()
 q2t_ratio = dict()
 
+f_tbl = open(filename_tbl,'r')
 for line in f_tbl:
     tokens = line.strip().split("\t")
     if( len(tokens) < 21 or tokens[0] == 'match' ):
+        continue
+    if( tokens[8] != '+' and tokens[8] != '-' ):
         continue
 
     match = int(tokens[0])
@@ -36,11 +42,11 @@ for line in f_tbl:
     qstart_list  = [x for x in tokens[19].rstrip(',').split(',')]
     tstart_list = [x for x in tokens[20].rstrip(',').split(',')]
 
-    match_ratio = float(match-mismatch-q_gap_bases)/q_size
-
-    #if( q_gap_count > 1 ):
-    #    continue
-
+    ## Original match_ratio
+    #match_ratio = float(match-mismatch-q_gap_bases)/q_size
+    ## Revised match_ratio (Nov. 2013, TK)
+    match_ratio = float(match-q_gap_bases)/q_size
+    
     if( not q2t.has_key(q_id) ):
         q2t[q_id] = dict()
         q2t_ratio[q_id] = dict()
@@ -55,6 +61,8 @@ for line in f_tbl:
     
 f_tbl.close()
 
+f_out = open(filename_out,'w')
+f_out.write('#Qid\tQlen\tT1_id\tT1_strand\tT1_ratio\tT1_block\T1_start\tT1_id\tT2_strand\tT2_ratio\tT2_block\tT2_start\n')
 for tmp_q in q2t_ratio.keys():
     t_list = sorted(q2t_ratio[tmp_q].keys(),key=q2t_ratio[tmp_q].get,reverse=True)
     t1 = t_list[0]
@@ -91,5 +99,6 @@ for tmp_q in q2t_ratio.keys():
         t_gap_bases2 = q2t[tmp_q][t2]['t_gap_bases']  
         t_gap_count2 = q2t[tmp_q][t2]['t_gap_count']  
     
-    print "%s\t%d\t%s\t%s\t%.3f\t%s\t%s\t%s\t%s\t%s\t%.3f\t%s\t%s\t%s"%(tmp_q,q_size,t1,strand1,ratio1,block1,qstart1,tstart1,t2,strand2,ratio2,block2,qstart2,tstart2)
-    #print "%s\t%d\t%s\t%.3f\t%d\t%d\t%s\t%.3f\t%d\t%d"%(tmp_q,q_size,t1,ratio1,q_gap_bases1,q_gap_count1,t2,ratio2,q_gap_bases2,q_gap_count2)
+    f_out.write("%s\t%d\t%s\t%s\t%.3f\t%s\t%s\t%s\t"%(tmp_q,q_size,t1,strand1,ratio1,block1,qstart1,tstart1))
+    f_out.write("%s\t%s\t%.3f\t%s\t%s\t%s\n"%(t2,strand2,ratio2,block2,qstart2,tstart2))
+f_out.close()

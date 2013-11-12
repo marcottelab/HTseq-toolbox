@@ -4,10 +4,12 @@ import sys
 import gzip
 
 filename_tbl = sys.argv[1]
+filename_out = '%s_best'%filename_tbl.replace('.gz','')
 
 best_hit = dict()
 f_tbl = open(filename_tbl,'r')
 if( filename_tbl.endswith('.gz') ):
+    filename_out = '%s_best'%filename_tbl.replace('.gz','')
     f_tbl = gzip.open(filename_tbl,'rb')
 
 for line in f_tbl:
@@ -34,7 +36,7 @@ for line in f_tbl:
         best_hit[q_id] = {'t_id':t_id, 'bit_score':bit_score, 'align_len':align_len, 'q_len':q_len, 't_len':t_len, 'mismatches':mismatches,'gap_opens':gap_opens, 'evalue':evalue}
 f_tbl.close()
 
-f_best = open('%s_best'%filename_tbl.replace('.gz',''),'w')
+f_best = open(filename_out,'w')
 f_best.write('#Qid\tQLen\tTid\tTLen\tAlignLen\tMismatches\tGapOpens\tBitScore\tEvalue\n')
 for q_id in sorted(best_hit.keys()):
     tmp = best_hit[q_id]

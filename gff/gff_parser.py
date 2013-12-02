@@ -16,6 +16,7 @@ def read_gmap_gff(tmp_filename_gff):
         tmp_type = tokens[2]
         tmp_t_start = int(tokens[3])
         tmp_t_end = int(tokens[4])
+        tmp_strand = tokens[6]
         tmp_desc_tokens = tokens[8].split(';')
 
         if( not rv.has_key(tmp_t_id) ):
@@ -29,7 +30,7 @@ def read_gmap_gff(tmp_filename_gff):
             if( tmp_id == 'NA' ):
                 continue
             if( not rv[tmp_t_id].has_key( tmp_id ) ):
-                rv[tmp_t_id][tmp_id] = {'gene':line.strip(), 't_start':tmp_t_start, 't_end':tmp_t_end, 't_range': tmp_t_end-tmp_t_start, 'mRNA':[], 'exon':[], 'CDS':[], 'coverage':0.0, 'identity':0.0}
+                rv[tmp_t_id][tmp_id] = {'gene':line.strip(), 't_start':tmp_t_start, 't_end':tmp_t_end, 't_range': tmp_t_end-tmp_t_start, 'mRNA':[], 'exon':[], 'CDS':[], 'coverage':0.0, 'identity':0.0, 'strand':tmp_strand}
         else:
             tmp_parent_id = 'NA'
             for tmp in tmp_desc_tokens:
@@ -77,8 +78,7 @@ def filter_best_cov(tmp_gff):
         tmp_gid = best_cov_genes[tmp_gene_id]['gid']
         tmp_tid = best_cov_genes[tmp_gene_id]['tid']
         rv[tmp_tid][tmp_gid] = tmp_gff[tmp_tid][tmp_gid]
-        if( tmp_gene_id.find('NM_001093551') >= 0 ):
-            print tmp_gene_id, tmp_gid
+
     return rv
 
 def filter_top2(tmp_gff,filename_top2):

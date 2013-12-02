@@ -77,6 +77,7 @@ for tmp_t_id in sorted(t_range_list.keys()):
         tmp_gff_i = gff_new[tmp_t_id][tmp_gene_i]
         tmp_t_start_i = tmp_gff_i['t_start']
         tmp_t_end_i = tmp_gff_i['t_end']
+        tmp_strand_i = tmp_gff_i['strand']
         if( exclude_list.has_key(tmp_gene_i) ):
             continue
         query_list[tmp_gene_i] = tmp_t_start_i
@@ -88,19 +89,20 @@ for tmp_t_id in sorted(t_range_list.keys()):
             tmp_gff_j = gff_new[tmp_t_id][tmp_gene_j]
             tmp_t_start_j = tmp_gff_j['t_start']
             tmp_t_end_j = tmp_gff_j['t_end']
+            tmp_strand_j = tmp_gff_j['strand']
                 
             if( exclude_list.has_key(tmp_gene_j) ):
                 continue
 
-            if( tmp_t_start_j >= tmp_t_start_i and tmp_t_end_j <= tmp_t_end_i ):
+            if( tmp_t_start_j >= tmp_t_start_i and tmp_t_end_j <= tmp_t_end_i and tmp_strand_i == tmp_strand_j ):
                 ### t_start_i < t_start_j < t_end_j < t_end_i : complete subset
                 if( not sub_list.has_key(tmp_gene_i) ):
                     sub_list[tmp_gene_i] = []
                 sub_list[tmp_gene_i].append(tmp_gene_j)
                 exclude_list[tmp_gene_j] = 1
 
-            elif( (tmp_t_start_j <= tmp_t_end_i and tmp_t_end_j >= tmp_t_end_i) \
-                or (tmp_t_start_j <= tmp_t_start_i and tmp_t_end_j >= tmp_t_start_i) ):
+            elif( (tmp_t_start_j <= tmp_t_end_i and tmp_t_end_j >= tmp_t_end_i and tmp_strand_i == tmp_strand_j ) \
+                or (tmp_t_start_j <= tmp_t_start_i and tmp_t_end_j >= tmp_t_start_i and tmp_strand_i == tmp_strand_j ) ):
                 
                 tmp_span_range = max(tmp_t_end_i, tmp_t_end_j) - min(tmp_t_start_i, tmp_t_start_j)
                 tmp_overlap = tmp_t_range_i + tmp_t_range_j - tmp_span_range

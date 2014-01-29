@@ -57,7 +57,7 @@ for filename_sam in os.listdir('.'):
     if( filename_sam.endswith('.gz') ):
         f_sam = gzip.open(filename_sam,'rb')
     
-    seq_len = 10101
+    seq_len = 10000
     for line in f_sam:
         if( line.startswith('@') and len(line.strip().split()[0]) < 4 ):
             if( line.startswith('@SQ') ):
@@ -105,8 +105,8 @@ for filename_sam in os.listdir('.'):
             G_counts[t_id] = [0 for x in range(0,seq_len)]
             C_counts[t_id] = [0 for x in range(0,seq_len)]
 
-        tmp_start = start_pos + tmp_startM - 1
-        tmp_end = tmp_start + tmp_matched_len
+        tmp_start = start_pos - 1
+        tmp_end = tmp_start + tmp_matched_len - 1
         tmp_boundary_start = 0
         tmp_boundary_end = 0
         if( tmp_matched_len < read_len ):
@@ -118,6 +118,8 @@ for filename_sam in os.listdir('.'):
         tmp_read_count = 1
         #tmp_read_count = int(read_id.split('_')[-1])
         for i in range(tmp_start, tmp_end+1):
+            if( i >= seq_len ):
+                print i,tmp_start,tmp_end,tokens
             if( tmp_strand == '+' ):
                 s_counts[t_id][i] += tmp_read_count
             else:
@@ -132,9 +134,6 @@ for filename_sam in os.listdir('.'):
                 G_counts[t_id][i] += tmp_read_count
             elif( tmp_n == 'C' ):
                 C_counts[t_id][i] += tmp_read_count
-
-            if( i == 990 and tmp_n != 'A' ):
-                print "+",read_id, start_pos, tmp_cigar, read_seq, tmp_start, tmp_end
 
             if( i < tmp_end-3 ):
                 quad_counts[t_id][i] += 1

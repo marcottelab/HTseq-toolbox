@@ -14,8 +14,8 @@ filename_out = '%s_top2'%(filename_psl.replace('_psl',''))
 q2t = dict()
 q2t_ratio = dict()
 
-f_tbl = open(filename_tbl,'r')
-for line in f_tbl:
+f_psl = open(filename_psl,'r')
+for line in f_psl:
     tokens = line.strip().split("\t")
     if( len(tokens) < 21 or tokens[0] == 'match' ):
         continue
@@ -59,10 +59,10 @@ for line in f_tbl:
         q2t[q_id][t_id] = {'strand':strand,'q_size':q_size,'t_size':t_size,'block':','.join(block_list),'qstart':','.join(qstart_list),'tstart':','.join(tstart_list), 'q_gap_bases':q_gap_bases,'t_gap_bases':t_gap_bases,'q_gap_count':q_gap_count,'t_gap_count':t_gap_count}
         q2t_ratio[q_id][t_id] = match_ratio
     
-f_tbl.close()
+f_psl.close()
 
 f_out = open(filename_out,'w')
-f_out.write('#Qid\tQlen\tT1_id\tT1_strand\tT1_ratio\tT1_block\T1_start\tT1_id\tT2_strand\tT2_ratio\tT2_block\tT2_start\n')
+f_out.write('#Qid\tQlen\tT1_id\tT1_strand\tT1_ratio\tT1_block\tQ1_start\tT1_start\tT1_id\tT2_strand\tT2_ratio\tT2_block\tQ2_start\tT2_start\n')
 for tmp_q in q2t_ratio.keys():
     t_list = sorted(q2t_ratio[tmp_q].keys(),key=q2t_ratio[tmp_q].get,reverse=True)
     t1 = t_list[0]

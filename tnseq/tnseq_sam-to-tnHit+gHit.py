@@ -82,11 +82,11 @@ for line in f_sam:
         count_max_matched += 1
         continue
     out_seq_list = []
-    for i in range(1,read_len+1):
+    for i in range(0,read_len):
         if( i >= start_pos and i <= start_pos + matched_len - 1 ):
-            out_seq_list.append( read_seq[i-1].upper() )
+            out_seq_list.append( read_seq[i].upper() )
         else:
-            out_seq_list.append( read_seq[i-1].lower() )
+            out_seq_list.append( read_seq[i].lower() )
     f_tnHit.write('%s\t%s\t%d\t%d\t%s\n'%(read_id, tmp_strand, target_pos, target_pos+matched_len, ''.join(out_seq_list)))
     #f_out.write('%s\n'%line.strip())
 f_sam.close()

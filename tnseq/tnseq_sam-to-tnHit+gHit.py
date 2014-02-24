@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 import os
 import sys
+import gzip
 
 filename_sam = sys.argv[1]
-filename_out = filename_sam + '_tnHit'
+filename_tnHit = filename_sam + '_tnHit'
+filename_gHit = filename_sam + '_gHit'
+
+min_matched_len = 10
+max_matched_len = 80
 
 ## ref: http://sqt.googlecode.com/git-history/hashing/sqt/cigar.py
 def parse_cigar(tmp_cigar):
@@ -31,17 +36,27 @@ def parse_cigar(tmp_cigar):
         start_pos += align_len 
     return start_pos, matched_len
 
-f_out = open(filename_out,'w')
+count_total = 0
+count_perfect = 0
+count_min_matched = 0
+count_max_matched = 0
+
 f_sam = open(filename_sam,'r')
+if( filename_sam.endswith('.gz') ):
+    f_sam = gzip.open(filename_sam,'rb')
+    filename_tnHit = filename_sam.replace('.gz','')+'_tnHit'
+    filename_gHit = filename_sam.replace('.gz','')+'_gHit'
+
+f_tnHit = open(filename_tnHit,'w')
+f_gHit = open(filename_gHit,'w')
 for line in f_sam:
     tokens = line.strip().split("\t")
     if( tokens[0].startswith('@') and len(tokens[0]) < 4 ):
         #f_out.write('%s\n'%line.strip())
         continue
     
-    tmp_cigar = tokens[5]
-    if( tmp_cigar == '100M' ):
-        continue
+    count_total += 1
+
     read_id = tokens[0]
     target_id = tokens[2]
     target_pos = int(tokens[3])
@@ -51,11 +66,20 @@ for line in f_sam:
     tmp_strand = '+'
     if( hit_flag & 16 ):
         tmp_strand = '-'
+    
+    tmp_cigar = tokens[5]
+    if( tmp_cigar == '100M' ):
+        count_perfect += 1
+        f_gHit.write('%s\t%s\t%d\t%d\t%s\n'%(read_id, tmp_strand, target_pos, target_pos+100, read_seq))
+        continue
 
     start_pos, matched_len = parse_cigar(tmp_cigar)
-    if( matched_len > read_len * 0.6 ):
+    if( matched_len > max_matched_len ):
+        count_min_matched += 1
+        f_gHit.write('%s\t%s\t%d\t%d\t%s\n'%(read_id, tmp_strand, target_pos, target_pos+matched_len, read_seq))
         continue
-    if( matched_len < read_len * 0.1 ):
+    if( matched_len < min_matched_len ):
+        count_max_matched += 1
         continue
     out_seq_list = []
     for i in range(1,read_len+1):
@@ -63,7 +87,10 @@ for line in f_sam:
             out_seq_list.append( read_seq[i-1].upper() )
         else:
             out_seq_list.append( read_seq[i-1].lower() )
-    f_out.write('%s\t%s\t%d\t%d\t%s\n'%(read_id, tmp_strand, target_pos, target_pos+matched_len, ''.join(out_seq_list)))
+    f_tnHit.write('%s\t%s\t%d\t%d\t%s\n'%(read_id, tmp_strand, target_pos, target_pos+matched_len, ''.join(out_seq_list)))
     #f_out.write('%s\n'%line.strip())
 f_sam.close()
-f_out.close()
+f_tnHit.write('#Total=%d, Perfect=%d (%.2fpct)\n'%(count_total,count_perfect,count_perfect*100.0/count_total))
+f_tnHit.write('#MinMatched=%d (%.2fpct), MaxMatched=%d (%.2fpct)\n'%(count_min_matched, count_min_matched*100.0/count_total, count_max_matched, count_max_matched*100.0/count_total))
+f_tnHit.close()
+f_gHit.close()

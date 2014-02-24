@@ -50,8 +50,8 @@ for line in f_tnPair:
     if( r1_pos_idx >= 0 and r2_pos_idx >=  0 ):
         f_out.write("%s\t%s\t%s\t%s\t%s\n"%(pair_id, r1_tokens[r1_pos_idx], r1_seq, r2_tokens[r2_pos_idx], r2_seq))
     elif( r1_pos_idx >= 0 ):
-        f_out.write("%s\t%s\t%s\t%s\t%s"%(pair_id, r1_tokens[r1_pos_idx], r1_seq, r2_tokens[0], tokens[4][:fragment_len]))
+        f_out.write("%s\t%s\t%s\t%s\t%s\n"%(pair_id, r1_tokens[r1_pos_idx], r1_seq, r2_tokens[0], tokens[4][:fragment_len]))
     elif( r2_pos_idx >= 0 ):
-        f_out.write("%s\t%s\t%s\t%s\t%s"%(pair_id, r1_tokens[0], tokens[3][:fragment_len], r2_tokens[r2_pos_idx], r2_seq))
+        f_out.write("%s\t%s\t%s\t%s\t%s\n"%(pair_id, r1_tokens[0], tokens[3][:fragment_len], r2_tokens[r2_pos_idx], r2_seq))
 f_tnPair.close()
 f_out.close()

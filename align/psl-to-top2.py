@@ -45,7 +45,9 @@ for line in f_psl:
     ## Original match_ratio
     #match_ratio = float(match-mismatch-q_gap_bases)/q_size
     ## Revised match_ratio (Nov. 2013, TK)
-    match_ratio = float(match-q_gap_bases)/q_size
+    #match_ratio = float(match-q_gap_bases)/q_size
+    ## Revised match_ratio (Feb. 2014, TK)
+    match_ratio = float(match)/q_size
     
     if( not q2t.has_key(q_id) ):
         q2t[q_id] = dict()
@@ -62,7 +64,7 @@ for line in f_psl:
 f_psl.close()
 
 f_out = open(filename_out,'w')
-f_out.write('#Qid\tQlen\tT1_id\tT1_strand\tT1_ratio\tT1_block\tQ1_start\tT1_start\tT1_id\tT2_strand\tT2_ratio\tT2_block\tQ2_start\tT2_start\n')
+f_out.write('#Qid\tQlen\tT1_id\tT1_strand\tT1_ratio\tT1_block\tQ1_start\tT1_start\tT2_id\tT2_strand\tT2_ratio\tT2_block\tQ2_start\tT2_start\n')
 for tmp_q in q2t_ratio.keys():
     t_list = sorted(q2t_ratio[tmp_q].keys(),key=q2t_ratio[tmp_q].get,reverse=True)
     t1 = t_list[0]

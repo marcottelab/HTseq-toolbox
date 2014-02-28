@@ -18,6 +18,7 @@ for filename in os.listdir('.'):
         continue
     if( not filename.endswith('.pblat_psl') and not filename.endswith('.pblat_psl.gz') ):
         continue
+
     f = open(filename,'r')
     if( filename.endswith('.gz') ):
         f = gzip.open(filename,'rb')
@@ -50,16 +51,17 @@ for filename in os.listdir('.'):
         qstart_list  = [x for x in tokens[19].rstrip(',').split(',')]
         tstart_list = [x for x in tokens[20].rstrip(',').split(',')]
 
-        q_ratio = (match - q_gap_bases)*100.0/q_size
-        t_ratio = (match - t_gap_bases)*100.0/t_size
+        #q_ratio = (match - q_gap_bases)*100.0/q_size
+        t_ratio = match*100.0/t_size
+        tm_ratio = (match+mismatch)*100.0/t_size
         t_offset = abs(100.0 - t_ratio)
 
         if( not q2best.has_key(q_id) ):
             q2best[q_id] = dict()
         if( not q2best[q_id].has_key(tmp_species) ):
-            q2best[q_id][tmp_species] = {'t_id':t_id, 'q_ratio':q_ratio, 't_ratio':t_ratio, 't_offset':t_offset}
+            q2best[q_id][tmp_species] = {'t_id':t_id, 'tm_ratio':tm_ratio, 't_ratio':t_ratio, 't_offset':t_offset}
         elif( q2best[q_id][tmp_species]['t_offset'] > t_offset ):
-            q2best[q_id][tmp_species] = {'t_id':t_id, 'q_ratio':q_ratio, 't_ratio':t_ratio, 't_offset':t_offset}
+            q2best[q_id][tmp_species] = {'t_id':t_id, 'tm_ratio':tm_ratio, 't_ratio':t_ratio, 't_offset':t_offset}
     f.close()
     sys.stderr.write('  Done\n')
 
@@ -72,8 +74,9 @@ for tmp_q in sorted(q2best.keys()):
         if( q2best[tmp_q].has_key(tmp_sp) ):
             tmp = q2best[tmp_q][tmp_sp]
             t_tokens = tmp['t_id'].split('|')
-            out_str.append('%s|%s|%d|%d'%(t_tokens[0],t_tokens[3],int(tmp['q_ratio']),int(tmp['t_ratio'])))
+            out_str.append('%s|%s|%d|%d'%(t_tokens[0],t_tokens[3],int(tmp['t_ratio']),int(tmp['tm_ratio'])))
         else:
             out_str.append('NA')
     f_out.write('%s\t%s\n'%(tmp_q, '\t'.join(out_str)))
+f_out.write('#target_name|target_id|coverage|identity\n')
 f_out.close()

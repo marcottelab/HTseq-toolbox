@@ -27,8 +27,10 @@ f_tbl.close()
 last_q_id = q_list[-1]
 remain_q_list = list( set(seq_list.keys()) - set(q_list) )
 remain_q_list.append(last_q_id)
-
-f_out = open('%s.remains'%filename_tbl,'w')
-for tmp_q in remain_q_list:
-    f_out.write('>%s\n%s\n'%(tmp_q,''.join(seq_list[tmp_q])))
-f_out.close()
+if( len(remains_q_list) <= 2 ):
+    sys.stderr.write('%s -- Done!\n'%filename_tbl)
+else:
+    f_out = open('%s.remains'%filename_tbl,'w')
+    for tmp_q in remain_q_list:
+        f_out.write('>%s\n%s\n'%(tmp_q,''.join(seq_list[tmp_q])))
+    f_out.close()

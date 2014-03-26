@@ -28,6 +28,7 @@ for filename_best in os.listdir('.'):
         tokens = line.strip().split("\t")
         if( not frames.has_key(tokens[0]) ):
             continue
+
         #q_id = tokens[0].split('|')[2]
         q_id = '|'.join(tokens[0].split('|')[:-1])
         t_id = tokens[2]

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import gzip
 
 usage_mesg = 'Usage: $HST/align/psl-to-top2.py <.psl file>'
 
@@ -15,6 +16,10 @@ q2t = dict()
 q2t_ratio = dict()
 
 f_psl = open(filename_psl,'r')
+if( filename_psl.endswith('.gz') ):
+    f_psl = gzip.open(filename_psl,'rb')
+    filename_out = '%s_top2'%(filename_psl.replace('_psl.gz',''))
+
 for line in f_psl:
     tokens = line.strip().split("\t")
     if( len(tokens) < 21 or tokens[0] == 'match' ):

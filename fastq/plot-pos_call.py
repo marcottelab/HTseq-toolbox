@@ -20,13 +20,17 @@ n_list = sorted(headers[1:])
 if( 'N' in n_list ):
     n_list.pop(n_list.index('N'))
     n_list.append('N')
+if( '.' in n_list ):
+    n_list.pop(n_list.index('.'))
+    n_list.append('.')
+
 
 pos_list = []
 call_list = dict()
 for tmp_n in n_list:
     call_list[tmp_n] = []
 
-total_reads = sum(pos_map[0].values())
+total_reads = sum(pos_map[1].values())
 for tmp_pos in sorted(pos_map.keys()):
     pos_list.append(tmp_pos)
     tmp_count = 0
@@ -34,7 +38,8 @@ for tmp_pos in sorted(pos_map.keys()):
         tmp_count += pos_map[tmp_pos][tmp_n]
         call_list[tmp_n].append(float(tmp_count)/total_reads)
 
-n_colors = {'A':'green','C':'blue','G':'orange','T':'red','N':'grey'}
+n_colors = {'A':'green','C':'blue','G':'orange','T':'red','N':'grey', \
+            '0':'green','1':'blue','2':'orange','3':'red','.':'grey'}
 
 ## http://stackoverflow.com/questions/1823058/how-to-print-number-with-commas-as-thousands-separators-in-python-2-x
 def num_group(number):

@@ -45,7 +45,7 @@ for tmp_pseq in prot_seq.keys():
     longest_h_prot = ''
     longest_h_cdna = ''
     for tmp_h in prot_seq[tmp_pseq]:
-        tmp_h_cdna = tmp_h.replace('p.','c.')
+        tmp_h_cdna = 'c.%s'%('.'.join(tmp_h.split('.')[1:]))
         tmp_nseq = ''.join(cdna_list[tmp_h_cdna])
         if( len(tmp_nseq) > len(longest_nseq) ):
             longest_h_prot = tmp_h

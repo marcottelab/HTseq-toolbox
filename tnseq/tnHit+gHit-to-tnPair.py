@@ -5,8 +5,8 @@ import gzip
 import re
 
 filename_tnHit = sys.argv[1]
+filename_gHit = filename_tnHit.replace('_tnHit','_gHit')
 filename_base = filename_tnHit.replace('_tnHit','')
-filename_gHit = filename_base+'_gHit'
 if( len(sys.argv) > 2 ):
     filename_gHit = sys.argv[2]
 
@@ -21,6 +21,7 @@ sys.stderr.write('Read %s ... '%filename_tnHit)
 f_tnHit = open(filename_tnHit,'r')
 if( filename_tnHit.endswith('.gz') ):
     f_tnHit = gzip.open(filename_tnHit,'rb')
+    filename_base = filename_tnHit.replace('_tnHit.gz','')
 
 for line in f_tnHit:
     if( line.startswith('#') ):
@@ -103,5 +104,6 @@ for tmp_p in sorted(pair2reads.keys()):
             tmp_h1 = tmp_h2
             tmp_h2 = tmp_h
         f_single.write('%s\t%d|%d|%s\t%d|%d|%s\t%s\t%s\n'%(tmp_p,tmp_h1['start'],tmp_h1['end'],tmp_h1['strand'],tmp_h2['start'],tmp_h2['end'],tmp_h2['strand'],tmp_h1['read_seq'],tmp_h2['read_seq']))
+
 f_single.close()
 f_both.close()

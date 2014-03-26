@@ -12,6 +12,11 @@ if( filename_fq == filename_1 ):
     sys.exit(1)
 
 f_fq = open(filename_fq,'r')
+if( filename_fq.endswith('.gz') ):
+    f_fq = gzip.open(filename_fq,'rb')
+    filename_1 = filename_1.replace('.gz','')
+    filename_2 = filename_2.replace('.gz','')
+
 f_1 = open(filename_1,'w')
 f_2 = open(filename_2,'w')
 

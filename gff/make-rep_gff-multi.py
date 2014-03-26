@@ -3,52 +3,10 @@ import os
 import sys
 import re
 import gzip
+import gff_parser
 
 filename_list = sys.argv[1]
 filename_base = filename_list.split('.')[0]
-
-def read_gff(tmp_filename_gff):
-    rv = dict()
-    f_gff = open(tmp_filename_gff,'r')
-    if( tmp_filename_gff.endswith('.gz') ):
-        f_gff = gzip.open(tmp_filename_gff,'rb')
-
-    for line in f_gff:
-        if( line.startswith('#') ):
-            continue
-
-        tokens = line.strip().split("\t")
-        tmp_t_id = tokens[0]
-        tmp_type = tokens[2]
-        tmp_t_start = int(tokens[3])
-        tmp_t_end = int(tokens[4])
-        tmp_desc_tokens = tokens[8].split(';')
-
-        if( not rv.has_key(tmp_t_id) ):
-            rv[tmp_t_id] = dict()
-        
-        if( tmp_type == 'gene' ):
-            tmp_id = 'NA'
-            for tmp in tmp_desc_tokens:
-                if( tmp.startswith('ID=') ):
-                    tmp_id = re.sub(r'^ID=','',tmp)
-            if( tmp_id == 'NA' ):
-                continue
-            if( tmp_id.endswith('.path1') ):
-                rv[tmp_t_id][tmp_id] = {'gene':line.strip(), 't_start':tmp_t_start, 't_end':tmp_t_end, 'mRNA':[], 'exon':[], 'CDS':[] }
-        else:
-            tmp_parent_id = 'NA'
-            for tmp in tmp_desc_tokens:
-                if( tmp.startswith('Parent') ):
-                    tmp_parent_id = re.sub(r'^Parent=','',tmp).replace('.mrna','.path')
-            
-            if( tmp_parent_id == 'NA' ):
-                continue
-            if( not rv[tmp_t_id].has_key(tmp_parent_id) ):
-                continue
-            rv[tmp_t_id][tmp_parent_id][tmp_type].append( line.strip() )
-    f_gff.close()
-    return rv
 
 def count_genes(tmp_gff):
     gene_list = []
@@ -66,11 +24,12 @@ for line in f_list:
     if( not os.access(tmp_filename, os.R_OK) ):
         sys.stderr.write('%s is not available.\n'%tmp_filename)
         continue
-    gff[tmp_dataname] = read_gff(tmp_filename)
+    gff[tmp_dataname] = gff_parser.read_gff(tmp_filename)
     data_list.append(tmp_dataname)
-    total_gene_count[tmp_dataname] = count_genes(gff[tmp_dataname])
+    total_gene_count[tmp_dataname] = gff_parser.count_genes(gff[tmp_dataname])
     sys.stderr.write('%s -> %s: %d scaffolds, %d genes\n'%(tmp_filename, tmp_dataname,len(gff[tmp_dataname]), total_gene_count[tmp_dataname]))
 f_list.close()
+sys.exit(1)
 
 if( len(data_list) == 0 ):
     sys.stderr.write('No input data. Exit.\n')
@@ -184,10 +143,10 @@ for tmp_t_id in sorted(gff_new.keys()):
 
         tmp_gene_str = gff[tmp_q_data][tmp_t_id][tmp_q_gene]['gene']
         prev_gene_tokens = tmp_gene_str.split(';')
-        if( prev_gene_tokens[-2].startswith('sub=') and prev_gene_tokens[-1].startswith('border=') ):
+        if( len(prev_gene_tokens) >= 3 and prev_gene_tokens[-2].startswith('sub=') and prev_gene_tokens[-1].startswith('border=') ):
             count_sub += int(prev_gene_tokens[-2].split('=')[1])
             count_border += int(prev_gene_tokens[-1].split('=')[1])
-            tmp_gene_str = '%s;sub=%d;border=%d'%(';'.join(prev_gene_tokens[:-3]),count_sub, count_border)
+            tmp_gene_str = '%s;sub=%d;border=%d'%(';'.join(prev_gene_tokens[:-2]),count_sub, count_border)
         else:
             tmp_gene_str = '%s;sub=%d;border=%d'%(tmp_gene_str, count_sub, count_border)
 
@@ -196,7 +155,7 @@ for tmp_t_id in sorted(gff_new.keys()):
             count_sub += int(prev_gene_tokens[-3].split('=')[1])
             count_border += int(prev_gene_tokens[-2].split('=')[1])
             count_exon += int(prev_gene_tokens[-1].split('=')[1])
-            tmp_gene_e_str = '%s;sub=%d;border=%d;exon=%d'%(';'.join(prev_gene_tokens[:-4]),count_sub, count_border,count_)
+            tmp_gene_e_str = '%s;sub=%d;border=%d;exon=%d'%(';'.join(prev_gene_tokens[:-3]),count_sub, count_border,count_)
         else:
             tmp_gene_e_str = '%s;sub=%d;border=%d;exon=%d'%(tmp_gene_e_str,count_sub,count_border,count_exon)
 
@@ -225,7 +184,7 @@ for tmp_t_id in sorted(gff_new.keys()):
             for tmp_b_data, tmp_b_gene in sorted(border_list[tmp_key_q]):
                 if( not total_border.has_key(tmp_b_data) ):
                     total_border[tmp_b_data] = []
-                total_border[tmp_b_data].append(tmp_s_gene)
+                total_border[tmp_b_data].append(tmp_b_gene)
                 tmp_tokens = gff[tmp_b_data][tmp_t_id][tmp_b_gene]['gene'].split("\t")
                 tmp_tokens[2] = 'gene_border'
                 tmp_tokens[-1] += ';exon_count=%d'%(len(gff[tmp_b_data][tmp_t_id][tmp_b_gene]['exon']))

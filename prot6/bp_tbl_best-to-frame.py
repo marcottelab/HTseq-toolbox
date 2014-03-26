@@ -5,8 +5,8 @@ import sys
 data_name = sys.argv[1]
 
 frames = dict()
-query_list = []
 
+query_list = []
 count_best = 0
 for filename in os.listdir('.'):
     if( not filename.startswith(data_name) ):

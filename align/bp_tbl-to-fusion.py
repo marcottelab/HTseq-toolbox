@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import re
 import gzip
 
 filename_tbl = sys.argv[1]
@@ -10,7 +11,7 @@ min_align_len = 12
 
 f_tbl = open(filename_tbl,'r')
 if( filename_tbl.endswith('.gz') ):
-    filename_base = filename_base.rstrip('.gz','')
+    filename_base = re.sub(r'.gz$','',filename_base)
     f_tbl = gzip.open(filename_tbl,'rb')
 
 hits = dict()

@@ -45,13 +45,18 @@ count_multi_no_win= 0
 filename_base = filename_pf_best.replace('.prot_full_best','')
 
 f_pf_best = open(filename_pf_best,'r')
+h_pf_best = f_pf_best.readline().strip().split("\t")
+
+idx_HUMAN = h_pf_best.index('HUMAN')
+ortho_HUMAN = dict()
+
 f_out = open('%s.names'%filename_base,'w')
 f_log = open('%s.names_log'%filename_base,'w')
 for line in f_pf_best:
     tokens = line.strip().split("\t")
 
     count_total += 1
-    q_name = '.'.join(tokens[0].split('|')[0].split('.')[1:]).upper()
+    q_name = '.'.join(tokens[0].split('|')[0].split('.')[1:])
 
     count_t = 0
     t_name_list = dict()
@@ -76,15 +81,24 @@ for line in f_pf_best:
         t_name = t_name_list.keys()[0]
         f_log.write("%s\t%s\tperfect\n"%(t_name,q_name))
         f_out.write('%s\t%s\n'%(t_name,q_name))
+        if( tokens[idx_HUMAN] != 'NA' ):
+            tmp_HUMAN_id = tokens[idx_HUMAN].split('|')[1]
+            if( not ortho_HUMAN.has_key(tmp_HUMAN_id) ):
+                ortho_HUMAN[tmp_HUMAN_id] = 1
     else:
         t_name_sorted = sorted(t_name_list.keys(),key=t_name_list.get)
         t_name_top = t_name_sorted[-1]
         if( t_name_list[t_name_top] > 1 ):
             f_log.write("%s\t%s\tmulti_best\n"%(';;'.join(t_name_sorted),q_name))
             f_out.write('%s\t%s\n'%(t_name_top,q_name))
+            if( tokens[idx_HUMAN] != 'NA' ):
+                tmp_HUMAN_id = tokens[idx_HUMAN].split('|')[1]
+                if( not ortho_HUMAN.has_key(tmp_HUMAN_id) ):
+                    ortho_HUMAN[tmp_HUMAN_id] = 1
         else:
             f_log.write("%s\t%s\tmulti_no_win\n"%(';;'.join(t_name_sorted),q_name))
             count_multi_no_win += 1
 f_pf_best.close()
 f_out.close()
 f_log.close()
+sys.stderr.write('Human ortholog: %d\n'%(len(ortho_HUMAN)))

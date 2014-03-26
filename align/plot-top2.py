@@ -37,15 +37,19 @@ sys.stderr.write('Total: %d, Single: %d (%.2f pct)\n'%(count_total, len(s_ratio_
 
 ratio_1pct = 0
 ratio_5pct = 0
+
 count_t1s_1pct = 0 
 count_t2_1pct = 0
 count_t1s_5pct = 0 
 count_t2_5pct = 0
+count_t1s_ratio80 = 0
 
 ratio_list = []
 cum_t1_count = dict()
 cum_s_count = dict()
 cum_t2_count = dict()
+f_log = open('%s_dist.log'%filename_top2,'w')
+f_log.write('#Ratio\tT1+S\tT1\tS\tT2\tT2_ratio\n')
 for tmp_ratio in [x*0.01 for x in range(100,0,-1)]:
     ratio_list.append(tmp_ratio)
     t1_count = len([x for x in t1_ratio_list if x >= tmp_ratio])
@@ -59,6 +63,8 @@ for tmp_ratio in [x*0.01 for x in range(100,0,-1)]:
     if( t1s_count+t2_count == 0 ):
         continue
     tmp_t2_ratio = float(t2_count) / (t1s_count+t2_count)
+    f_log.write('%.2f\t%d\t%d\t%d\t%d\t%.4f\n'%(tmp_ratio,t1s_count,t1_count,s_count,t2_count,tmp_t2_ratio))
+
     if( tmp_t2_ratio > 0.01 and ratio_1pct == 0 ):
         #sys.stderr.write('Test ratio:%.2f, T2 ratio:%.3f, T1 count:%d, T2 count:%d\n'%(tmp_ratio, tmp_t2_ratio, t1s_count, t2_count))
         ratio_1pct = tmp_ratio
@@ -70,9 +76,14 @@ for tmp_ratio in [x*0.01 for x in range(100,0,-1)]:
         ratio_5pct = tmp_ratio
         count_t1s_5pct = t1s_count
         count_t2_5pct = t2_count
+    
+    if( tmp_ratio == 0.8 ):
+        count_t1s_ratio80 = t1s_count
 
 sys.stderr.write('1 pct cutoff: %.2f (1st+single=%d;2nd=%d)\n'%(ratio_1pct,count_t1s_1pct,count_t2_1pct))
 sys.stderr.write('5 pct cutoff: %.2f (1st+single=%d;2nd=%d)\n'%(ratio_5pct,count_t1s_5pct,count_t2_5pct))
+sys.stderr.write('align_ratio 0.80 (1st+single=%d)\n'%(count_t1s_ratio80))
+f_log.close()
 
 import matplotlib
 matplotlib.use('Agg')
@@ -82,12 +93,12 @@ import matplotlib.font_manager as fm
 
 fig = plt.figure(figsize=(12,5))
 ax1 = fig.add_subplot(1,2,1)
-ax1.plot(ratio_list, [cum_t1_count[x]+cum_s_count[x] for x in ratio_list], markerfacecolor='blue', label='1st+single')
-ax1.plot(ratio_list, [cum_t1_count[x] for x in ratio_list], markerfacecolor='cyan', label='1st')
-ax1.plot(ratio_list, [cum_t2_count[x] for x in ratio_list], markerfacecolor='black', label='2nd')
-ax1.plot(ratio_list, [cum_s_count[x] for x in ratio_list], markerfacecolor='lightgreen', label='single')
+ax1.plot(ratio_list, [cum_t1_count[x]+cum_s_count[x] for x in ratio_list], color='blue', label='1st+single')
+ax1.plot(ratio_list, [cum_t1_count[x] for x in ratio_list], color='cyan', label='1st')
+ax1.plot(ratio_list, [cum_t2_count[x] for x in ratio_list], color='black', label='2nd')
+ax1.plot(ratio_list, [cum_s_count[x] for x in ratio_list], color='orange', label='single')
 ax1.vlines(ratio_5pct, 0, count_total*0.5, color='red',lw=2,label='5 pct cutoff')
-ax1.set_title('5pct cutoff=%.2f (1st+single=%d;2nd=%d)'%(ratio_5pct,count_t1s_5pct,count_t2_5pct))
+ax1.set_title('5pct cutoff=%.2f (1st+single=%d)'%(ratio_5pct,count_t1s_5pct))
 ax1.invert_xaxis()
 ax1.grid()
 ax1.legend(loc='lower right', prop=fm.FontProperties(size=10))
@@ -95,12 +106,13 @@ ax1.set_xlabel('Align ratio')
 ax1.set_ylabel('Cumulative Number of Query Sequences')
 
 ax2 = fig.add_subplot(1,2,2)
-ax2.plot(ratio_list, [(cum_t1_count[x]+cum_s_count[x])*1.0/count_total for x in ratio_list], markerfacecolor='blue', label='1st+single')
-ax2.plot(ratio_list, [cum_t1_count[x]*1.0/count_total for x in ratio_list], markerfacecolor='cyan', label='1st')
-ax2.plot(ratio_list, [cum_t2_count[x]*1.0/count_total for x in ratio_list], markerfacecolor='black', label='2nd')
-ax2.plot(ratio_list, [cum_s_count[x]*1.0/count_total for x in ratio_list], markerfacecolor='lightgreen', label='single')
+ax2.plot(ratio_list, [(cum_t1_count[x]+cum_s_count[x])*1.0/count_total for x in ratio_list], color='blue', label='1st+single')
+ax2.plot(ratio_list, [cum_t1_count[x]*1.0/count_total for x in ratio_list], color='cyan', label='1st')
+ax2.plot(ratio_list, [cum_t2_count[x]*1.0/count_total for x in ratio_list], color='black', label='2nd')
+ax2.plot(ratio_list, [cum_s_count[x]*1.0/count_total for x in ratio_list], color='orange', label='single')
 ax2.vlines(ratio_5pct, 0, 0.5, color='red',lw=2,label='5 pct cutoff')
 ax2.invert_xaxis()
+ax2.set_title('align_ratio 0.80: 1st+single=%d'%(count_t1s_ratio80))
 ax2.set_xlim(1.0, 0.5)
 ax2.grid()
 ax2.legend(loc='lower right', prop=fm.FontProperties(size=9))

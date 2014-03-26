@@ -22,12 +22,14 @@ for line in f_list:
     f = open(filename,'r')
     f.readline()
     for line in f:
+        if( line.startswith('#') ):
+            continue
         tokens = line.strip().split('\t')
         gene_id = tokens[0]
         gene_list.append(gene_id)
         if(not g2s.has_key(gene_id) ):
             g2s[gene_id] = dict()
-        g2s[gene_id][sample_name] = int(tokens[1])
+        g2s[gene_id][sample_name] = float(tokens[1])
     sys.stderr.write('Done\n')
 
 sample_list = sorted(sample_list)
@@ -37,7 +39,7 @@ for tmp_g in gene_list:
     out_list = [tmp_g]
     for tmp_s in sample_list:
         if( g2s[tmp_g].has_key(tmp_s) ):
-            out_list.append('%d'%g2s[tmp_g][tmp_s])
+            out_list.append('%.3f'%g2s[tmp_g][tmp_s])
         else:
-            out_list.append('0')
+            out_list.append('0.000')
     print "\t".join(out_list)

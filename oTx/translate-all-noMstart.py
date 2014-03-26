@@ -2,7 +2,6 @@
 import os
 import sys
 
-
 filename_fa = sys.argv[1]
 
 min_plen = 6
@@ -17,7 +16,7 @@ for line in f_fa:
         seq_h = line.strip().lstrip('>')
         seq_list[seq_h] = []
     else:
-        seq_list[seq_h].append(line.strip())
+        seq_list[seq_h].append(line.strip().upper())
 f_fa.close()
 
 ## http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG1
@@ -44,7 +43,6 @@ def translate(tmp_nseq):
         else:
             rv.append( trans_tbl[tmp_codon] )
     return ''.join(rv)
-	#return ''.join([ trans_tbl[tmp_nseq[i:i+3]] for i in range(0,len(tmp_nseq)-2,3) ])
 
 def revcomp(tmp_nseq):
     return ''.join([rc[x] for x in tmp_nseq.upper()[::-1]])
@@ -69,12 +67,6 @@ for tmp_h in sorted(seq_list.keys()):
         tmp_p = tmp_p6[tmp_pf]
         longest_pep = ''
         for tmp_pep in tmp_p.split('*'):
-            #if( tmp_pep.find('M') < 0 ):
-            #    continue
-
-            #tmp_p_start = tmp_pep.index('M')
-            #tmp_pep = tmp_pep[tmp_p_start:]
-
             if( len(tmp_pep) > len(longest_pep) ):
                 longest_pep = tmp_pep
     

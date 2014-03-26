@@ -35,16 +35,18 @@ for filename in os.listdir('.'):
 
 target_list = list(set(target_list))
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 for target_id in target_list:
-    
     fig = plt.figure(figsize=(12,5))
     ax1 = fig.add_subplot(1,1,1)
 
-    holes_x = []
-    holes100_x = []
     tmp_y = 0
     for tmp_sample in sample_list:
+        holes_x = []
+        holes100_x = []
         if( holes100[tmp_sample].has_key(target_id) ):
             for tmp_pos in holes100[tmp_sample][target_id]:
                 holes100_x.append( (tmp_pos, holes100[tmp_sample][target_id][tmp_pos]) )
@@ -60,7 +62,6 @@ for target_id in target_list:
             ax1.broken_barh(holes100_x, (tmp_y, 0.8), facecolor='red', edgecolor='red')
 
         tmp_y -= 1
-
     ax1.set_xlim(0,4500000)
     ax1.grid()
     ax1.set_yticks([x+0.4 for x in range(0,tmp_y,-1)])

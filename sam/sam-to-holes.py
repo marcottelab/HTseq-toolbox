@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 import os
 import sys
+import gzip
 
 filename_sam = sys.argv[1]
 
 seq_map = dict()
 f_sam = open(filename_sam, 'r')
+if( filename_sam.endswith('.gz') ):
+    f_sam = gzip.open(filename_sam,'rb')
+
 for line in f_sam:
     if( line.startswith('@') ):
         if( line.startswith('@SQ') ):
@@ -26,7 +30,7 @@ for line in f_sam:
         seq_map[t_id][tmp_i+t_pos] += 1
 f_sam.close()
 
-filename_base = filename_sam.replace('.sam','')
+filename_base = filename_sam.replace('.sam','').replace('.sam_hit.gz','')
 
 f_holes = open('%s.holes'%filename_base,'w')
 f_holes100 = open('%s.holes100'%filename_base,'w')

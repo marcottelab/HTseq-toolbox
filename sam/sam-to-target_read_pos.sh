@@ -6,6 +6,6 @@ do
     echo "Skip $OUT"
   else
     echo "$SAM --> $OUT"
-    awk '{print $3"_"$1"\t"$4"\t"$2}' $SAM | sort > $OUT
+    awk '{print $3" _::_ "$1"\t"$4"\t"$2}' $SAM | sort > $OUT
   fi
 done

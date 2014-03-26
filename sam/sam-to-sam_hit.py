@@ -1,22 +1,23 @@
 #!/usr/bin/env python
 import os
 import sys
+import re
 import gzip
 
 filename_sam = sys.argv[1]
-
 filename_hit = filename_sam+'_hit'
 filename_nohit = filename_sam+'_nohit'
 
 f_sam = open(filename_sam,'r')
+if( filename_sam.endswith('.gz') ):
+    f_sam = gzip.open(filename_sam,'rb')
+    filename_sam = re.sub('.gz$','',filename_sam)
+
+    filename_hit = filename_sam+'_hit'
+    filename_nohit = filename_sam+'_nohit'
 
 f_hit = open(filename_hit,'w')
 f_nohit = open(filename_nohit,'w')
-
-if( filename_sam.endswith('.gz') ):
-    f_sam = gzip.open(filename_sam,'rb')
-    filename_out = filename_sam.replace('.gz','')+'_slim'
-
 for line in f_sam:
     if( line.startswith('@') ):
         f_hit.write('%s\n'%line.strip())

@@ -43,13 +43,16 @@ for line in f_gff:
 
     if( tmp_type == 'exon' ):
         genes[tmp_mrna_id]['exon'] += (tmp_end - tmp_start)
+        gff[tmp_mrna_id].append( line.strip() )
     elif( tmp_type == 'CDS' ):
         genes[tmp_mrna_id]['CDS'] += (tmp_end - tmp_start)
+        gff[tmp_mrna_id].append( line.strip() )
     elif( tmp_type == 'mRNA' ):
         tokens[2] = 'gene'
         tokens[8] = '%s;%s'%(tmp_desc_tokens[0].replace('mrna','path'),tmp_desc_tokens[1])
         gff[tmp_mrna_id].append( '\t'.join(tokens) )
         gff[tmp_mrna_id].append( line.strip() )
+
 f_gff.close()
 
 target2cds = dict()
@@ -76,9 +79,9 @@ for tmp_id in genes.keys():
 
     #print "%s\t%s\t%d\t%d\t%d\t%d"%(tmp_id, tmp_t_id, tmp['start'], tmp['end'], tmp['exon'], tmp['CDS'])
 
-f_out = open('%s_summary'%filename_gff,'w')
-f_log = open('%s_log'%filename_gff,'w')
-f_gff = open('%s_summary.gff3'%filename_gff,'w')
+f_out = open('%s_summary'%filename_base,'w')
+f_log = open('%s_log'%filename_base,'w')
+f_gff = open('%s_summary.gff3'%filename_base,'w')
 f_gff.write('##gff-version 3\n')
 for tmp_target_id in sorted(target2cds.keys()):
     covered = dict()

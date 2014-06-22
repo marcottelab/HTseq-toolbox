@@ -38,11 +38,12 @@ for line in f_gff:
         continue
     
     if( not genes.has_key(tmp_mrna_id) ):
-        genes[tmp_mrna_id] = {'t_id':t_id, 'start':tmp_start, 'end':tmp_end, 'exon':0, 'CDS':0}
+        genes[tmp_mrna_id] = {'t_id':t_id, 'start':tmp_start, 'end':tmp_end, 'exon':0, 'CDS':0, 'exon_count':0}
         #gff[tmp_mrna_id] = []
 
     if( tmp_type == 'exon' ):
         genes[tmp_mrna_id]['exon'] += (tmp_end - tmp_start)
+        genes[tmp_mrna_id]['exon_count'] += 1
         #gff[tmp_mrna_id].append( line.strip() )
     elif( tmp_type == 'CDS' ):
         genes[tmp_mrna_id]['CDS'] += (tmp_end - tmp_start)
@@ -91,6 +92,7 @@ for tmp_target_id in sorted(target2cds.keys()):
             tmp_end = genes[tmp_id]['end']
             tmp_cov_len = tmp_end - tmp_start
             tmp_exon_len = genes[tmp_id]['exon']
+            tmp_exon_count = genes[tmp_id]['exon_count']
             is_covered = 0
             for tmp_cid in covered.keys():
                 tmp_cstart = covered[tmp_cid]['start']
@@ -105,10 +107,10 @@ for tmp_target_id in sorted(target2cds.keys()):
                     break
 
             if( is_covered > 0 ):
-                f_log.write("%s\t%s\t%d\t%d\t%d\t%d\t%s\t%d\t%d\n"%(tmp_target_id, tmp_id.replace('.mrna1',''), tmp_start, tmp_end, tmp_cds_len, tmp_exon_len,tmp_cid, tmp_cstart, tmp_cend))
+                f_log.write("%s\t%s\t%d\t%d\t%d\t%d\t%d\t%s\t%d\t%d\n"%(tmp_target_id, tmp_id.replace('.mrna1',''), tmp_start, tmp_end, tmp_cds_len, tmp_exon_len, tmp_exon_count, tmp_cid, tmp_cstart, tmp_cend))
                 continue
 
-            f_out.write("%s\t%s\t%d\t%d\t%d\t%d\n"%(tmp_target_id, tmp_id.replace('.mrna1',''), tmp_start, tmp_end, tmp_cds_len, tmp_exon_len))
+            f_out.write("%s\t%s\t%d\t%d\t%d\t%d\t%d\n"%(tmp_target_id, tmp_id.replace('.mrna1',''), tmp_start, tmp_end, tmp_cds_len, tmp_exon_len,tmp_exon_count))
             #for tmp_line in gff[tmp_id]:
             #    f_gff.write('%s\n'%tmp_line)
             covered[tmp_id] = {'start': tmp_start, 'end':tmp_end}

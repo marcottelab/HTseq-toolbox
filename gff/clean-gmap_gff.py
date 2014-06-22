@@ -4,13 +4,6 @@ import sys
 
 filename_gff = sys.argv[1]
 
-seqlen = dict()
-f_len = open('/work/xenopus.db/genome/XENLA_JGIv72/XENLA_JGIv72.seqlen','r')
-for line in f_len:
-    tokens = line.strip().split("\t")
-    seqlen[tokens[0]] = int(tokens[1])
-f_len.close()
-
 print "##gff-version 3"
 f_gff = open(filename_gff,'r')
 for line in f_gff:
@@ -22,8 +15,6 @@ for line in f_gff:
     if( t_id.find(';;') >= 0 ):
         t_tokens = t_id.split('.')
         tokens[0] = '%s.%s.chrNA'%(t_tokens[0],t_tokens[1])
-    if( seqlen.has_key(t_id) and seqlen[t_id] < 1000 ):
-        continue
 
     new_attr_list = []
     tmp_path_no = 0

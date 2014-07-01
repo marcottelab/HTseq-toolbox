@@ -2,6 +2,7 @@
 import os
 import sys
 import re
+import gzip
 
 filename_fa = sys.argv[1]
 
@@ -21,10 +22,13 @@ for line in f_fa:
 f_fa.close()
 sys.stderr.write('Done\n')
 
+f_out = open('%s.N_dist'%(re.sub(r'.fa[sta]*','',filename_fa)),'w')
+f_out.write('#SeqID\tNsLen\tNsStart\tNsEnd\n')
 for tmp_h in seq_list.keys():
     tmp_seq = ''.join(seq_list[tmp_h])
     for tmp_n in re.finditer(r'N+',tmp_seq):
         tmp_start = tmp_n.start()
         tmp_end = tmp_n.end()
         tmp_len = tmp_end - tmp_start
-        print "%s\t%d\t%d\t%d"%(tmp_h,tmp_len,tmp_start,tmp_end)
+        f_out.write("%s\t%d\t%d\t%d"%(tmp_h,tmp_len,tmp_start,tmp_end))
+f_out.close()

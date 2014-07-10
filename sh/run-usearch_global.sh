@@ -12,4 +12,4 @@ fi
 
 OUT=$(echo $OUT | sed -e 's/.fa[sta]*././g')
 
-$USEARCH -usearch_global $QUERY_FA -db $DB_FA -id 0.4 -userout $OUT -userfields $USER_FIELDS
+$USEARCH -usearch_global $QUERY_FA -db $DB_FA -id 0.4 -maxaccepts 16 -maxrejects 32 -userout $OUT -userfields $USER_FIELDS

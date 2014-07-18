@@ -62,7 +62,7 @@ for line in f_sam:
                 s_counts[seq_id] = [0 for x in range(0,seq_len)]
                 as_counts[seq_id] = [0 for x in range(0,seq_len)]
                 quad_counts[seq_id] = [0 for x in range(0,seq_len)]
-                codon_counts[seq_id] = [0 for x in range(0,seq_len)]
+                codon_counts[seq_id] = [dict() for x in range(0,seq_len)]
                 boundary_counts[seq_id] = [0 for x in range(0,seq_len)]
                 A_counts[seq_id] = [0 for x in range(0,seq_len)]
                 T_counts[seq_id] = [0 for x in range(0,seq_len)]
@@ -134,7 +134,7 @@ for line in f_sam:
             quad_counts[t_id][i] += 1
 
         if( i < tmp_end-2 ):
-            tmp_codon = read_seq[i-start_pos+tmp_startM+1:i_start_pos+tmp_startM+4]
+            tmp_codon = read_seq[i-start_pos+tmp_startM+1:i-start_pos+tmp_startM+4]
             tmp_codon = '%s|%s'%(tmp_codon, tmp_strand)
             if( not codon_counts[t_id][i].has_key(tmp_codon) ):
                 codon_counts[t_id][i][tmp_codon] = 0
@@ -155,6 +155,8 @@ for t_id in s_counts.keys():
     t_name = t_id.replace('|','_')
     f_log.write('#Target: %s\n'%t_name)
     for i in range(0,len(s_counts[t_id])):
-        tmp_codon_freq = ';'.join(['%s=%d'%(x,y) for x,y in codon_counts[t_id][i].items()])
+        tmp_codon_freq = 'NA'
+        if( len(codon_counts[t_id][i]) > 0 ):
+            tmp_codon_freq = ';'.join(['%s=%d'%(x,y) for x,y in codon_counts[t_id][i].items()])
         f_log.write("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\n"%(t_id, i, s_counts[t_id][i], as_counts[t_id][i], quad_counts[t_id][i], boundary_counts[t_id][i],A_counts[t_id][i],T_counts[t_id][i],G_counts[t_id][i],C_counts[t_id][i],tmp_codon_freq))
 f_log.close()

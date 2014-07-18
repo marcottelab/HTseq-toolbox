@@ -5,7 +5,6 @@ import gzip
 import re
 
 filename_sam = sys.argv[1]
-
 min_match = 25
 
 ## ref: http://sqt.googlecode.com/git-history/hashing/sqt/cigar.py
@@ -137,7 +136,7 @@ for line in f_sam:
 f_sam.close()
 sys.stderr.write('Done\n')
 
-filename_base = filename_sam.split('.')[0]
+filename_base = re.sub(r'.sam[_a-z]*$','',filename_sam)
 filename_log = '%s.t_base_log'%(filename_base)
 f_log = open(filename_log,'w')
 f_log.write('Target\tPos\tCount+\tCount-\tQuadruple\tBorder\tA\tT\tG\tC\n')
@@ -145,5 +144,5 @@ for t_id in s_counts.keys():
     t_name = t_id.replace('|','_')
     f_log.write('#Target: %s\n'%t_name)
     for i in range(0,len(s_counts[t_id])):
-        f_log.write("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%s\n"%(t_id, i, s_counts[t_id][i], as_counts[t_id][i], quad_counts[t_id][i], boundary_counts[t_id][i],A_counts[t_id][i],T_counts[t_id][i],G_counts[t_id][i],C_counts[t_id][i]))
+        f_log.write("%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n"%(t_id, i, s_counts[t_id][i], as_counts[t_id][i], quad_counts[t_id][i], boundary_counts[t_id][i],A_counts[t_id][i],T_counts[t_id][i],G_counts[t_id][i],C_counts[t_id][i]))
 f_log.close()

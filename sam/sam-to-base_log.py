@@ -80,6 +80,8 @@ for line in f_sam:
     tmp_strand = '+'
     if( hit_flag & 16 ):
         tmp_strand = '-'
+    if( tmp_cigar == '*' ):
+        continue
 
     tmp_startM, tmp_matched_len = get_cigar(tmp_cigar)
     if( tmp_matched_len < min_match ):

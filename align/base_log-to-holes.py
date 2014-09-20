@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os
 import sys
+import gzip
 
 filename_base_log = sys.argv[1]
 
@@ -12,12 +13,19 @@ hole_start = 0
 hole_end = 0
 hole_cov_list = []
 
-filename_holes = filename_base_log.replace('.base_log','')+'.holes'
+filename_holes = filename_base_log.replace('.t_base_log','')+'.holes'
 f_base_log = open(filename_base_log,'r')
+
+if( filename_base_log.endswith('.gz') ):
+    f_base_log = gzip.open(filename_base_log,'rb')
+    filename_holes = filename_base_log.replace('.t_base_log.gz','')+'.holes'
+
 f_holes = open(filename_holes,'w')
 f_holes100 = open(filename_holes+'100','w')
 f_holes.write('#Start\tEnd\tSize\tStartCov\tEndCov\n')
 f_holes100.write('#Start\tEnd\tSize\tStartCov\tEndCov\n')
+
+headers = f_base_log.readline().strip().split()
 for line in f_base_log:
     if( line.startswith('Pos') ):
         continue
@@ -27,8 +35,8 @@ for line in f_base_log:
         continue
 
     tokens = line.strip().split("\t")
-    tmp_pos = int(tokens[0])
-    tmp_cov = int(tokens[1]) + int(tokens[2])
+    tmp_pos = int(tokens[1])
+    tmp_cov = int(tokens[2]) + int(tokens[3])
     if( prev_cov == -1 ):
         prev_cov = tmp_cov
         continue

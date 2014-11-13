@@ -4,7 +4,7 @@ import sys
 import re
 
 filename_sam = sys.argv[1]
-filename_out = re.sub(r'.sam[_A-z]*$','.pair_xover',filename_sam)
+filename_out = re.sub(r'.sam[_A-z]*$','',filename_sam) + '.pair_xover'
 sys.stderr.write('%s -> %s\n'%(filename_sam, filename_out))
 
 step_size = 1000

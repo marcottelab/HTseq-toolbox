@@ -71,6 +71,7 @@ for tmp_t_id in t2pair.keys():
                 continue
             pair_dist[tmp_t_id][tmp_pos_list[0]] = tmp_pos_list[1]
 
+f_out = open(filename_out,'w')
 for tmp_t_id in pair_dist.keys():
     if( not seqlen.has_key(tmp_t_id) ):
         continue
@@ -84,4 +85,5 @@ for tmp_t_id in pair_dist.keys():
         tmp_singleton_freq = 0 
         if( singleton_freq.has_key(tmp_t_id) and singleton_freq[tmp_t_id].has_key(tmp_pos) ):
             tmp_singleton_freq = singleton_freq[tmp_t_id][tmp_pos]
-        print "%s\t%d\t%d\t%d"%(tmp_t_id, tmp_pos, tmp_cross_freq, tmp_singleton_freq) 
+        f_out.write("%s\t%d\t%d\t%d\n"%(tmp_t_id, tmp_pos, tmp_cross_freq, tmp_singleton_freq)) 
+f_out.close()

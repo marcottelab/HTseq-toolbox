@@ -6,7 +6,6 @@ import re
 filename_sam = sys.argv[1]
 filename_out = re.sub(r'.sam[_A-z]*$','.pair_xover',filename_sam)
 sys.stderr.write('%s -> %s\n'%(filename_sam, filename_out))
-sys.exit(1)
 
 step_size = 1000
 min_dist = 500

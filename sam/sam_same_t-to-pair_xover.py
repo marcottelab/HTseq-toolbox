@@ -9,9 +9,11 @@ sys.stderr.write('%s -> %s\n'%(filename_sam, filename_out))
 
 step_size = 1000
 min_dist = 500
-max_dist = 500000
+#max_dist = 500000
+max_dist = 15000
 
 t2pair = dict()
+pair_freq = dict()
 seqlen = dict()
 f_sam = open(filename_sam,'r')
 sys.stderr.write("Read %s\n"%filename_sam)
@@ -29,61 +31,58 @@ for line in f_sam:
     read_id = tokens[0]
     pair_id = read_id.split('/')[0]
     flag = tokens[1]
-    t_id = tokens[2]
-    t_pos = int(tokens[3])
-    cigar = tokens[5]
-    if( t_id == '*' or cigar == '*' ):
+    t1_id = tokens[2]
+    t1_pos = int(tokens[3])
+    cigar1 = tokens[5]
+    if( t1_id == '*' or cigar1 == '*' ):
         continue
 
-    tmp_AS = 0
-    tmp_XS = 0
-    for tmp in tokens[11:]:
-        if( tmp.startswith('AS') ):
-            tmp_AS = int(tmp.split(':')[2])
-        if( tmp.startswith('XS') ):
-            tmp_XS = int(tmp.split(':')[2])
+    t2_id = tokens[6]
+    t2_pos = int(tokens[7])
+    ## only works with paired mapped SAM (memory issue)
+    if( t2_id != '=' ):
+        continue
+    if( t1_pos == t2_pos ):
+        continue
 
-    if( not t2pair.has_key(t_id) ):
-        t2pair[t_id] = dict()
-    if( not t2pair[t_id].has_key(pair_id) ):
-        t2pair[t_id][pair_id] = dict()
-    t2pair[t_id][pair_id][t_pos] = {'cigar':cigar, 'flag':flag, 'AS':tmp_AS, 'XS':tmp_XS}
+    if( not pair_freq.has_key(pair_id) ):
+        pair_freq[pair_id] = 0
+    pair_freq[pair_id] += 1
+    if( not t2pair.has_key(t1_id) ):
+        t2pair[t1_id] = dict()
+    if( not t2pair[t1_id].has_key(pair_id) ):
+        t2pair[t1_id][pair_id] = []
+    t2pair[t1_id][pair_id].append( sorted([t1_pos, t2_pos]))
 f_sam.close()
 
-singleton_freq = dict()
 pair_dist = dict()
 for tmp_t_id in t2pair.keys():
-    singleton_freq[tmp_t_id] = dict()
     pair_dist[tmp_t_id] = dict()
 
     for tmp_pair in t2pair[tmp_t_id].keys():
-        tmp_pos_list = sorted(t2pair[tmp_t_id][tmp_pair].keys())
-        if( len(tmp_pos_list) == 1 ):
-            tmp_pos_idx = int(tmp_pos_list[0]/step_size)*step_size
-            if( not singleton_freq[tmp_t_id].has_key(tmp_pos_idx) ):
-                singleton_freq[tmp_t_id][tmp_pos_idx] = 0
-            singleton_freq[tmp_t_id][tmp_pos_idx] += 1
+        if( pair_freq[tmp_pair] > 2 ):
             continue
-
-        elif( len(tmp_pos_list) == 2 ):
-            tmp_dist = tmp_pos_list[1] - tmp_pos_list[0]
+        for tmp_pos1, tmp_pos2 in t2pair[tmp_t_id][tmp_pair]:
+            tmp_dist = tmp_pos2 - tmp_pos1
             if( tmp_dist < min_dist or tmp_dist > max_dist ):
                 continue
-            pair_dist[tmp_t_id][tmp_pos_list[0]] = tmp_pos_list[1]
+            pair_dist[tmp_t_id][tmp_pos1] = tmp_pos2
 
 f_out = open(filename_out,'w')
 for tmp_t_id in pair_dist.keys():
     if( not seqlen.has_key(tmp_t_id) ):
         continue
+    
+    print len(pair_dist[tmp_t_id])*1.0/seqlen[tmp_t_id]
     for tmp_pos in range(0,seqlen[tmp_t_id],step_size):
         tmp_cross_freq = 0
+
+        dist_list = []
         for tmp_start_pos in pair_dist[tmp_t_id].keys():
             tmp_end_pos = pair_dist[tmp_t_id][tmp_start_pos]
             if( tmp_pos > tmp_start_pos and tmp_pos < tmp_end_pos ):
                 tmp_cross_freq += 1
+                dist_list.append( tmp_end_pos - tmp_start_pos )
 
-        tmp_singleton_freq = 0 
-        if( singleton_freq.has_key(tmp_t_id) and singleton_freq[tmp_t_id].has_key(tmp_pos) ):
-            tmp_singleton_freq = singleton_freq[tmp_t_id][tmp_pos]
-        f_out.write("%s\t%d\t%d\t%d\n"%(tmp_t_id, tmp_pos, tmp_cross_freq, tmp_singleton_freq)) 
+        f_out.write("%s\t%d\t%d\t%s\n"%(tmp_t_id, tmp_pos, tmp_cross_freq, ','.join(['%d'%x for x in dist_list]))) 
 f_out.close()

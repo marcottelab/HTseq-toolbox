@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import math
 import re
 
 filename_sam = sys.argv[1]
@@ -8,12 +9,16 @@ filename_out = re.sub(r'.sam[_A-z]*$','',filename_sam) + '.pair_xover'
 sys.stderr.write('%s -> %s\n'%(filename_sam, filename_out))
 
 step_size = 1000
-min_dist = 500
+
+#min_dist = 500
 #max_dist = 500000
-max_dist = 15000
+exp_dist = 10000
+min_dist = exp_dist*0.1
+max_dist = exp_dist*1.9
 
 t2pair = dict()
 pair_freq = dict()
+pair_dist = []
 seqlen = dict()
 f_sam = open(filename_sam,'r')
 sys.stderr.write("Read %s\n"%filename_sam)
@@ -44,6 +49,7 @@ for line in f_sam:
         continue
     if( t1_pos == t2_pos ):
         continue
+    tmp_dist = abs(t2_pos - t1_pos)
 
     if( not pair_freq.has_key(pair_id) ):
         pair_freq[pair_id] = 0
@@ -52,37 +58,76 @@ for line in f_sam:
         t2pair[t1_id] = dict()
     if( not t2pair[t1_id].has_key(pair_id) ):
         t2pair[t1_id][pair_id] = []
+
     t2pair[t1_id][pair_id].append( sorted([t1_pos, t2_pos]))
+    pair_dist.append( tmp_dist )
 f_sam.close()
 
-pair_dist = dict()
+pair_dist = sorted([x for x in pair_dist if x > exp_dist*0.1])
+Q50_dist = pair_dist[ int(len(pair_dist)*0.50) ]
+Q25_dist = pair_dist[ int(len(pair_dist)*0.25) ]
+Q75_dist = pair_dist[ int(len(pair_dist)*0.75) ]
+IQR = Q75_dist - Q25_dist
+
+sys.stderr.write('%s - median_dist:%d, IQR:%d\n'%(filename_out, Q50_dist, IQR))
+
+#import matplotlib.pyplot as plt
+#fig = plt.figure(figsize=(8,8))
+#ax1 = fig.add_subplot(1,1,1)
+#ax1.hist(pair_dist, bins=range(100,20000,100))
+#plt.show()
+
+pair_pos = dict()
+long_pos = dict()
+short_pos = dict()
 for tmp_t_id in t2pair.keys():
-    pair_dist[tmp_t_id] = dict()
+    pair_pos[tmp_t_id] = dict()
+    long_pos[tmp_t_id] = dict()
+    short_pos[tmp_t_id] = dict()
 
     for tmp_pair in t2pair[tmp_t_id].keys():
         if( pair_freq[tmp_pair] > 2 ):
             continue
+
         for tmp_pos1, tmp_pos2 in t2pair[tmp_t_id][tmp_pair]:
             tmp_dist = tmp_pos2 - tmp_pos1
-            if( tmp_dist < min_dist or tmp_dist > max_dist ):
-                continue
-            pair_dist[tmp_t_id][tmp_pos1] = tmp_pos2
+            #if( tmp_dist < Q50_dist-1.5*IQR ):
+            if( tmp_dist < Q25_dist ):
+                short_pos[tmp_t_id][tmp_pos1] = tmp_pos2
+            #elif( tmp_dist > Q50_dist+1.5*IQR ):
+            elif( tmp_dist > Q75_dist ):
+                long_pos[tmp_t_id][tmp_pos1] = tmp_pos2
+            else:
+                pair_pos[tmp_t_id][tmp_pos1] = tmp_pos2
 
 f_out = open(filename_out,'w')
-for tmp_t_id in pair_dist.keys():
+f_out.write('#TargetID\tPos\tPairFreq\tLongFreq\tShortFreq\n')
+f_out.write('#Median:%d Q25:%d Q75:%d IQR:%d\n'%(Q50_dist,Q25_dist,Q75_dist,IQR))
+for tmp_t_id in pair_pos.keys():
     if( not seqlen.has_key(tmp_t_id) ):
         continue
     
-    print len(pair_dist[tmp_t_id])*1.0/seqlen[tmp_t_id]
     for tmp_pos in range(0,seqlen[tmp_t_id],step_size):
-        tmp_cross_freq = 0
+        tmp_pair_freq = 0
+        tmp_long_freq = 0
+        tmp_short_freq = 0
 
         dist_list = []
-        for tmp_start_pos in pair_dist[tmp_t_id].keys():
-            tmp_end_pos = pair_dist[tmp_t_id][tmp_start_pos]
+        for tmp_start_pos in pair_pos[tmp_t_id].keys():
+            tmp_end_pos = pair_pos[tmp_t_id][tmp_start_pos]
             if( tmp_pos > tmp_start_pos and tmp_pos < tmp_end_pos ):
-                tmp_cross_freq += 1
+                tmp_pair_freq += 1
                 dist_list.append( tmp_end_pos - tmp_start_pos )
 
-        f_out.write("%s\t%d\t%d\t%s\n"%(tmp_t_id, tmp_pos, tmp_cross_freq, ','.join(['%d'%x for x in dist_list]))) 
+        for tmp_start_pos in long_pos[tmp_t_id].keys():
+            tmp_end_pos = long_pos[tmp_t_id][tmp_start_pos]
+            if( tmp_pos > tmp_start_pos and tmp_pos < tmp_end_pos ):
+                tmp_long_freq += 1
+        
+        for tmp_start_pos in short_pos[tmp_t_id].keys():
+            tmp_end_pos = short_pos[tmp_t_id][tmp_start_pos]
+            if( tmp_pos > tmp_start_pos and tmp_pos < tmp_end_pos ):
+                tmp_short_freq += 1
+        
+        f_out.write("%s\t%d\t%d\t%d\t%d\n"%(tmp_t_id, tmp_pos, tmp_pair_freq, tmp_long_freq, tmp_short_freq))
 f_out.close()

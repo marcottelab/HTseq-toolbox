@@ -5,8 +5,10 @@ import gzip
 
 filename_txt = sys.argv[1]
 
-f_txt = gzip.open(filename_txt,'rb')
-#f_txt = open(filename_txt,'r')
+f_txt = open(filename_txt,'r')
+if( filename_txt.endswith('.gz') ):
+    f_txt = gzip.open(filename_txt,'rb')
+
 for line in f_txt:
     tokens = line.strip().split(':')
     header = ':'.join(tokens[:5])

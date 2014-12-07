@@ -30,7 +30,8 @@ def get_cigar(tmp_cigar):
         if( tag == 'M' ):
             matched_len = align_len
             break
-        start_pos += align_len
+        if( tag != 'H' ):
+            start_pos += align_len
     return start_pos, matched_len
 
 s_counts = dict()

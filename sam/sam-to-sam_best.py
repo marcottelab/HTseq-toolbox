@@ -22,7 +22,11 @@ for line in f_sam:
         f_dubious.write(line)
         continue
     tokens = line.strip().split("\t")
-    read_id = '%s_%s'%(tokens[0],tokens[9][:10])
+    tmp_pair = 1
+    if( tokens[1] & 128 ):
+        tmp_pair = 2
+    read_id = '%s|%d'%(tokens[0],tmp_pair)
+
     t_id = tokens[2]
     if( t_id == '*' ):
         continue

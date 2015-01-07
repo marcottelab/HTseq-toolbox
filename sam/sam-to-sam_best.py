@@ -23,7 +23,7 @@ for line in f_sam:
         continue
     tokens = line.strip().split("\t")
     tmp_pair = 1
-    if( tokens[1] & 128 ):
+    if( int(tokens[1]) & 128 ):
         tmp_pair = 2
     read_id = '%s|%d'%(tokens[0],tmp_pair)
 

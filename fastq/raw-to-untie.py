@@ -102,7 +102,7 @@ for line in f_fq1:
             h_nseq2 = '@%s'%h2_tokens[1]
 
         f_untie_1.write('%s\n%s\n+\n%s\n'%(h_nseq1,nseq1,qseq1))
-        f_untie_1.write('%s\n%s\n+\n%s\n'%(h_nseq2,nseq2,qseq2))
+        f_untie_2.write('%s\n%s\n+\n%s\n'%(h_nseq2,nseq2,qseq2))
 
 f_fq1.close()
 f_fq2.close()

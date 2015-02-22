@@ -9,6 +9,8 @@ filename_gHit = filename_sam + '_gHit'
 
 min_matched_len = 10
 max_matched_len = 80
+read_len = 100
+perfect_cigar = '%dM'%read_len
 
 ## ref: http://sqt.googlecode.com/git-history/hashing/sqt/cigar.py
 def parse_cigar(tmp_cigar):
@@ -33,6 +35,8 @@ def parse_cigar(tmp_cigar):
         if( tag == 'M' ):
             matched_len = align_len
             break
+        if( tag == 'S' or tag == 'H' ):
+            continue
         start_pos += align_len 
     return start_pos, matched_len
 
@@ -54,7 +58,6 @@ for line in f_sam:
     if( tokens[0].startswith('@') and len(tokens[0]) < 4 ):
         #f_out.write('%s\n'%line.strip())
         continue
-    
     count_total += 1
 
     read_id = tokens[0]
@@ -66,9 +69,11 @@ for line in f_sam:
     tmp_strand = '+'
     if( hit_flag & 16 ):
         tmp_strand = '-'
+    if( target_id == '*' ):
+        continue
     
     tmp_cigar = tokens[5]
-    if( tmp_cigar == '100M' ):
+    if( tmp_cigar == perfect_cigar ):
         count_perfect += 1
         f_gHit.write('%s\t%s\t%d\t%d\t%s\n'%(read_id, tmp_strand, target_pos, target_pos+100, read_seq))
         continue

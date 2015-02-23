@@ -32,11 +32,12 @@ def parse_cigar(tmp_cigar):
         return start_pos, matched_len
     
     for tag,align_len in rv:
+        if( tag == 'S' or tag == 'H' ):
+            start_pos += align_len
+            continue
         if( tag == 'M' ):
             matched_len = align_len
             break
-        if( tag == 'S' or tag == 'H' ):
-            continue
         start_pos += align_len 
     return start_pos, matched_len
 
@@ -65,12 +66,13 @@ for line in f_sam:
     target_pos = int(tokens[3])
     read_seq = tokens[9]
     read_len = len(read_seq)
+    if( target_id == '*' ):
+        continue
+    
     hit_flag = int(tokens[1])
     tmp_strand = '+'
     if( hit_flag & 16 ):
         tmp_strand = '-'
-    if( target_id == '*' ):
-        continue
     
     tmp_cigar = tokens[5]
     if( tmp_cigar == perfect_cigar ):
@@ -80,11 +82,11 @@ for line in f_sam:
 
     start_pos, matched_len = parse_cigar(tmp_cigar)
     if( matched_len > max_matched_len ):
-        count_min_matched += 1
+        count_max_matched += 1
         f_gHit.write('%s\t%s\t%d\t%d\t%s\n'%(read_id, tmp_strand, target_pos, target_pos+matched_len, read_seq))
         continue
     if( matched_len < min_matched_len ):
-        count_max_matched += 1
+        count_min_matched += 1
         continue
     out_seq_list = []
     for i in range(0,read_len):

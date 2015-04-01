@@ -30,5 +30,5 @@ for tmp_h in seq_list.keys():
         tmp_start = tmp_n.start()
         tmp_end = tmp_n.end()
         tmp_len = tmp_end - tmp_start
-        f_out.write("%s\t%d\t%d\t%d"%(tmp_h,tmp_len,tmp_start,tmp_end))
+        f_out.write("%s\t%d\t%d\t%d\n"%(tmp_h,tmp_len,tmp_start,tmp_end))
 f_out.close()

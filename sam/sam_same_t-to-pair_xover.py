@@ -107,27 +107,30 @@ for tmp_t_id in pair_pos.keys():
     if( not seqlen.has_key(tmp_t_id) ):
         continue
     
+    tmp_freq = dict()
+    dist_list = []
     for tmp_pos in range(0,seqlen[tmp_t_id],step_size):
-        tmp_pair_freq = 0
-        tmp_long_freq = 0
-        tmp_short_freq = 0
+        tmp_freq[tmp_pos] = {'pair':0, 'long':0, 'short':0}
+    
+    for tmp_start_pos in pair_pos[tmp_t_id].keys():
+        tmp_end_pos = pair_pos[tmp_t_id][tmp_start_pos]
+        for tmp_pos in range(int(tmp_start_pos/step_size), int(tmp_end_pos/step_size)+1):
+            tmp_pos = tmp_pos * step_size
+            tmp_freq[tmp_pos]['pair'] += 1
+            #dist_list.append( tmp_end_pos - tmp_start_pos )
 
-        dist_list = []
-        for tmp_start_pos in pair_pos[tmp_t_id].keys():
-            tmp_end_pos = pair_pos[tmp_t_id][tmp_start_pos]
-            if( tmp_pos > tmp_start_pos and tmp_pos < tmp_end_pos ):
-                tmp_pair_freq += 1
-                dist_list.append( tmp_end_pos - tmp_start_pos )
+    for tmp_start_pos in long_pos[tmp_t_id].keys():
+        tmp_end_pos = long_pos[tmp_t_id][tmp_start_pos]
+        for tmp_pos in range(int(tmp_start_pos/step_size), int(tmp_end_pos/step_size)+1):
+            tmp_pos = tmp_pos * step_size
+            tmp_freq[tmp_pos]['long'] += 1
 
-        for tmp_start_pos in long_pos[tmp_t_id].keys():
-            tmp_end_pos = long_pos[tmp_t_id][tmp_start_pos]
-            if( tmp_pos > tmp_start_pos and tmp_pos < tmp_end_pos ):
-                tmp_long_freq += 1
-        
-        for tmp_start_pos in short_pos[tmp_t_id].keys():
-            tmp_end_pos = short_pos[tmp_t_id][tmp_start_pos]
-            if( tmp_pos > tmp_start_pos and tmp_pos < tmp_end_pos ):
-                tmp_short_freq += 1
-        
-        f_out.write("%s\t%d\t%d\t%d\t%d\n"%(tmp_t_id, tmp_pos, tmp_pair_freq, tmp_long_freq, tmp_short_freq))
+    for tmp_start_pos in short_pos[tmp_t_id].keys():
+        tmp_end_pos = short_pos[tmp_t_id][tmp_start_pos]
+        for tmp_pos in range(int(tmp_start_pos/step_size), int(tmp_end_pos/step_size)+1):
+            tmp_pos = tmp_pos * step_size
+            tmp_freq[tmp_pos]['short'] += 1
+    
+    for tmp_pos in range(0,seqlen[tmp_t_id],step_size):
+        f_out.write("%s\t%d\t%d\t%d\t%d\n"%(tmp_t_id, tmp_pos, tmp_freq[tmp_pos]['pair'], tmp_freq[tmp_pos]['long'], tmp_freq[tmp_pos]['short']))
 f_out.close()
